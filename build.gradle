@@ -47,8 +47,11 @@ orchid {
         if(isPullRequest == "true") {
             baseUrl = System.getenv('DEPLOY_URL')
         }
-        else {
+        else if(System.getenv('URL')) {
             baseUrl = System.getenv('URL')
+        }
+        else {
+            baseUrl = 'http://localhost:8080'
         }
     }
     else {

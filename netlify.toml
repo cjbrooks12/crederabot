@@ -7,6 +7,6 @@
 
 [build]
   base    = ""
-  command = "./gradlew orchidBuild -Penv=prod"
+  command = "yarn run netlifyDeploy"
   publish = "build/docs/orchid"
   functions = "build/docs/functions"
