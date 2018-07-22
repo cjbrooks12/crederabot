@@ -1,0 +1,10 @@
+openApi:
+  openapi: "3.0.0"
+  info:
+    version: '#{$0|siteVersion}'
+    title: 'Orchid Netlify Slackbot'
+    license:
+      name: MIT
+  servers:
+    - url: 'http://localhost:9000'
+    - url: '#{$0|baseUrlRoot}/.netlify'

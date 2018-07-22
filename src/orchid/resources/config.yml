@@ -1,0 +1,32 @@
+site:
+  about:
+    siteName: 'Orchid Netlify Slackbot'
+
+theme:
+  primaryColor: '#a3232a'
+  menu:
+    - type: 'link'
+      title: 'Home'
+      url: '/'
+    - type: 'page'
+      itemId: 'Commands'
+    - type: 'page'
+      itemId: 'API Reference'
+    - type: 'link'
+      title: 'Slack Docs'
+      url: '/slack'
+
+allPages:
+  layout: single
+
+staticPages:
+  layout: single
+
+services:
+  compilers:
+    precompiler:
+      customDelimeters:
+        - regex: '^/\*---(.*)---\*/'
+          group: 1
+          parser: 'yml'
+          fileExtensions: [ 'js', 'css', 'scss' ]

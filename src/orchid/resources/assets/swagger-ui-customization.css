@@ -1,0 +1,77 @@
+/*---
+---*/
+
+#swagger-ui button {
+    border: 0;
+    box-shadow: none;
+    font-size: 11px;
+    height: initial;
+    padding: 1px 7px 2px 7px;
+    line-height: initial;
+}
+#swagger-ui p {
+    margin: 0;
+}
+#swagger-ui a {
+    border-bottom: 0;
+}
+#swagger-ui form {
+    margin: 0;
+}
+#swagger-ui .topbar {
+    background-color: #f5f6f7;
+}
+#swagger-ui .topbar a span {
+    color: black;
+}
+.swagger-ui .topbar .download-url-wrapper input[type=text] {
+    border: 2px solid {{theme.primaryColor}} !important;
+}
+.swagger-ui .topbar .download-url-wrapper .download-url-button {
+    background: {{theme.primaryColor}} !important;
+    color: white !important;
+}
+.swagger-ui .info .title small + small {
+    background-color: {{theme.primaryColor}} !important;
+}
+
+@media only screen and (min-width: 105.01em) {
+    #swagger-ui .topbar {
+        margin-left: -6.5rem;
+        margin-right: -6.5rem;
+        padding: 35px 0 35px 6.5rem;
+    }
+}
+@media only screen and (max-width: 105em) and (min-width: 80.01em) {
+    #swagger-ui .topbar {
+        margin-left: -4.6rem;
+        margin-right: -4.6rem;
+        padding: 22px 0 22px 4.6rem;
+    }
+}
+@media only screen and (max-width: 80em) and (min-width: 46.13em) {
+    #swagger-ui .topbar {
+        margin-left: -3.5rem;
+        margin-right: -3.5rem;
+        padding: 17px 0 17px 3.5rem;
+    }
+}
+@media only screen and (max-width: 46.12em) {
+    #swagger-ui .topbar {
+        margin-left: -1.5rem;
+        margin-right: -1.5rem;
+        padding: 15px 0 15px 4rem;
+    }
+}
+
+#pageContent > header.major {
+    display: none;
+}
+
+#pageContent {
+    padding-top: 0 !important;
+}
+
+#header {
+    display: none;
+}
