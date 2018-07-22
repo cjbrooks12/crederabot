@@ -33,7 +33,7 @@ exports.handler = async (event, context) => {
             const messageRegex = /<@(\w+)>\s*?(\+\+|--)/;
 
             if (messageRegex.test(body.event.text)) {
-                const match = messageRegex.exec(body.event.text);
+                const match = body.event.text.match(messageRegex);
                 const userId = match[1];
                 const isPlus = match[2] === "++";
 
