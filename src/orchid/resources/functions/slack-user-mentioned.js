@@ -33,7 +33,7 @@ exports.handler = async (event, context) => {
     else if (body.type === "event_callback") {
 
         // handle message posted
-        if(body.event.type === "message") {
+        if(body.event.type === "message" && body.event.text.includes("\+\+")) {
             console.log("Handling messages.channel");
             // Send greeting to Slack
             return fetch(process.env.SLACK_WEBHOOK_URL,
