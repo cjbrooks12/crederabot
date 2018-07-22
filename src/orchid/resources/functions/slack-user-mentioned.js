@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
                         "content-type": "application/json"
                     },
                     method: "POST",
-                    body: JSON.stringify({text: `Handling messages.channel ++ message: ${body.event.text}`})
+                    body: JSON.stringify({text: `Slack says hello!`})
                 })
                 .then(() => ({
                     statusCode: 200,
