@@ -17,7 +17,6 @@ exports.handler = async (event, context) => {
         return {statusCode: 405, body: "Method Not Allowed"};
     }
 
-
     // When the method is POST, the name will no longer be in the event’s
     // queryStringParameters – it’ll be in the event body encoded as a queryString
     const body = JSON.parse(event.body);
@@ -25,43 +24,40 @@ exports.handler = async (event, context) => {
 
     // handle URL challenge
     if (body.type === "url_verification") {
-        console.log("Handling URL Verification");
         return {statusCode: 200, body: challenge};
     }
 
     // handle Events API callback
     else if (body.type === "event_callback") {
+        if (body.event.type === "message") {
+            const messageRegex = /<@(\w+)>\s*?(\+\+|--)/;
 
-        // handle message posted
-        if(body.event.type === "message" && body.event.text.includes("\+\+")) {
-            console.log(`Handling messages.channel ++ message: ${body.event.text}`);
-            // Send greeting to Slack
-            return fetch(process.env.SLACK_WEBHOOK_URL,
-                {
-                    headers: {
-                        "content-type": "application/json"
-                    },
-                    method: "POST",
-                    body: JSON.stringify({text: `Slack says hello!`})
-                })
-                .then(() => ({
-                    statusCode: 200,
-                    body: "success"
-                }))
-                .catch(error => ({
-                    statusCode: 422,
-                    body: `Oops! Something went wrong. ${error}`
-                }));
-        }
-        else {
-            console.log(`Event callback type [${body.type}] not supported`);
-            return {statusCode: 404, body: `Event callback type [${body.type}] not supported`};
+            if (messageRegex.test(body.event.text)) {
+                const match = messageRegex.exec(body.event.text);
+                const userId = match[1];
+                const isPlus = match[2] === "++";
+
+                console.log(`Handling messages.channel ++ message: ${body.event.text} - ${userId} ${isPlus ? 'gains a point' : 'loses a point'}`);
+                return fetch(process.env.SLACK_WEBHOOK_URL,
+                    {
+                        headers: {
+                            "content-type": "application/json"
+                        },
+                        method: "POST",
+                        body: JSON.stringify({text: `${userId} ${isPlus ? 'gains a point' : 'loses a point'}`})
+                    })
+                    .then(() => ({
+                        statusCode: 200,
+                        body: "success"
+                    }))
+                    .catch(error => ({
+                        statusCode: 422,
+                        body: `Oops! Something went wrong. ${error}`
+                    }));
+            }
         }
     }
 
     // return error, event not supported
-    else {
-        console.log(`Event type [${body.type}] not supported`);
-        return {statusCode: 404, body: `Event type [${body.type}] not supported`};
-    }
+    return {statusCode: 404, body: "event not handled"};
 };
