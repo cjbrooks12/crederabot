@@ -29,26 +29,34 @@ exports.handler = async (event, context) => {
         return {statusCode: 200, body: challenge};
     }
 
-    // handle incoming user message
-    else if (body.type === "messages.channel") {
-        console.log("Handling messages.channel");
-        // Send greeting to Slack
-        return fetch(process.env.SLACK_WEBHOOK_URL,
-            {
-                headers: {
-                    "content-type": "application/json"
-                },
-                method: "POST",
-                body: JSON.stringify({text: `Slack says hello!`})
-            })
-            .then(() => ({
-                statusCode: 200,
-                body: "success"
-            }))
-            .catch(error => ({
-                statusCode: 422,
-                body: `Oops! Something went wrong. ${error}`
-            }));
+    // handle Events API callback
+    else if (body.type === "event_callback") {
+
+        // handle message posted
+        if(body.event.type === "message") {
+            console.log("Handling messages.channel");
+            // Send greeting to Slack
+            return fetch(process.env.SLACK_WEBHOOK_URL,
+                {
+                    headers: {
+                        "content-type": "application/json"
+                    },
+                    method: "POST",
+                    body: JSON.stringify({text: `Slack says hello!`})
+                })
+                .then(() => ({
+                    statusCode: 200,
+                    body: "success"
+                }))
+                .catch(error => ({
+                    statusCode: 422,
+                    body: `Oops! Something went wrong. ${error}`
+                }));
+        }
+        else {
+            console.log(`Event callback type [${body.type}] not supported`);
+            return {statusCode: 404, body: `Event callback type [${body.type}] not supported`};
+        }
     }
 
     // return error, event not supported
