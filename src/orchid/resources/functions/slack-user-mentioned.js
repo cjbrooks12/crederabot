@@ -38,14 +38,14 @@ exports.handler = async (event, context) => {
                 const isPlus = match[2] === "++";
 
                 console.log(`Handling messages.channel ++ message: ${body.event.text} - ${userId} ${isPlus ? 'gains a point' : 'loses a point'}`);
-
+                console.log(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`);
                 return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`,
                     {
                         method: "GET",
                         body: JSON.stringify({text: `${userId} ${isPlus ? 'gains a point' : 'loses a point'}`})
                     })
                     .then((response) => {
-                        return response.json().then(function (data) {
+                        return response.json().then((data) => {
                             console.log(data);
 
                             const userName = data.profile.real_name_normalized;
