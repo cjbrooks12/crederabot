@@ -34,7 +34,7 @@ exports.handler = async (event, context) => {
 
         // handle message posted
         if(body.event.type === "message" && body.event.text.includes("\+\+")) {
-            console.log("Handling messages.channel");
+            console.log(`Handling messages.channel ++ message: ${body.event.text}`);
             // Send greeting to Slack
             return fetch(process.env.SLACK_WEBHOOK_URL,
                 {
@@ -42,7 +42,7 @@ exports.handler = async (event, context) => {
                         "content-type": "application/json"
                     },
                     method: "POST",
-                    body: JSON.stringify({text: `Slack says hello!`})
+                    body: JSON.stringify({text: `Handling messages.channel ++ message: ${body.event.text}`})
                 })
                 .then(() => ({
                     statusCode: 200,
