@@ -30,12 +30,13 @@ exports.handler = async (event, context) => {
     // handle Events API callback
     else if (body.type === "event_callback") {
         if (body.event.type === "message") {
-            const messageRegex = /<@(\w+)>\s*?(\+\+|--)/;
+            const messageRegex = /<@(\w+)>\s*?(\+\+|--)(.*)/;
 
             if (messageRegex.test(body.event.text)) {
                 const match = body.event.text.match(messageRegex);
                 const userId = match[1];
                 const isPlus = match[2] === "++";
+                const reason = match[3];
 
                 return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {method: "GET"})
                     .then((response) => {
@@ -51,7 +52,7 @@ exports.handler = async (event, context) => {
                             },
                             body: JSON.stringify({
                                 channel: body.event.channel,
-                                text: `${userName} (${userId}) ${isPlus ? 'gains a point' : 'loses a point'}`
+                                text: `${userName} (${userId}) ${isPlus ? 'gains a point' : 'loses a point'} for ${reason}`
                             })
                         });
                     })
