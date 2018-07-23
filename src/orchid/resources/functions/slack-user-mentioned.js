@@ -10,6 +10,18 @@ responses:
 ---*/
 
 import fetch from "node-fetch";
+import admin from "firebase-admin";
+
+let firebase = admin;
+
+let serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_FILE);
+
+firebase.initializeApp({
+    credential: firebase.credential.cert(serviceAccount),
+    databaseURL: process.env.FIREBASE_URL
+});
+
+let db = firebase.database();
 
 exports.handler = async (event, context) => {
     // Only allow POST
@@ -17,8 +29,6 @@ exports.handler = async (event, context) => {
         return {statusCode: 405, body: "Method Not Allowed"};
     }
 
-    // When the method is POST, the name will no longer be in the event’s
-    // queryStringParameters – it’ll be in the event body encoded as a queryString
     const body = JSON.parse(event.body);
     const challenge = body.challenge;
 
@@ -38,16 +48,9 @@ exports.handler = async (event, context) => {
                 const isPlus = match[2] === "++";
                 const reason = match[3];
 
-                return getOrCreateRecordInDatabase(userId)
-
-                    .then((record) => {
-                        return updateRecordToDatabase(userId, record.id, record.score, isPlus)
-                    })
-                    .then(() => {
-                        return getUserProfileInfo(userId)
-                    })
-                    .then((data) => {
-                        return postMessageToSlack(data.profile.real_name_normalized, isPlus, 1, reason);
+                return createOrUpdateRecord(userId, isPlus, reason)
+                    .then((newScore) => {
+                        return postMessageToSlack(userId, body.event.channel, isPlus, newScore, reason);
                     })
 
                     // handle success and error
@@ -67,86 +70,59 @@ exports.handler = async (event, context) => {
     return {statusCode: 404, body: "event not handled"};
 };
 
-function getUserProfileInfo(userId) {
+function postMessageToSlack(userId, channel, isPlus, newTotal, reason) {
     return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {
         method: "GET"
     }).then((response) => {
         return response.json();
-    });
-}
-
-function postMessageToSlack(username, isPlus, newTotal, reason) {
-    return fetch("https://slack.com/api/chat.postMessage", {
-        method: "POST",
-        headers: {
-            "content-type": "application/json",
-            Authorization: `Bearer ${process.env.SLACK_TOKEN}`
-        },
-        body: JSON.stringify({
-            channel: body.event.channel,
-            text: `${username} ${isPlus ? 'gains a point' : 'loses a point'} ${(reason) ? `for ${reason}` : ''}`
-        })
-    });
-}
-
-function getOrCreateRecordInDatabase(userId) {
-    return fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_TABLE_ID}?filterByFormula={userid}='${userId}'`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`
-        }
     }).then((response) => {
-        return response.json();
-    }).then((data) => {
-            if (data.records && data.records.length === 0) {
-                return data.records[0];
+        return fetch("https://slack.com/api/chat.postMessage", {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                Authorization: `Bearer ${process.env.SLACK_TOKEN}`
+            },
+            body: JSON.stringify({
+                channel: body.event.channel,
+                text: `${response.profile.real_name_normalized} ${isPlus ? 'gains a point' : 'loses a point'} and now has ${newTotal} points ${(reason) ? `, ${isPlus ? '1' : '-1'} of which is for ${reason}` : ''}`
+            })
+        });
+    });
+}
+
+function createOrUpdateRecord(userId, isPlus, reason) {
+    return new Promise(resolve => {
+        let ref = db.ref("crederaPlusPlus");
+        let usersRef = ref.child("users");
+
+        let user = usersRef.child(userId);
+
+        user.once("value", function (snapshot) {
+            let val = snapshot.val();
+
+            if (val) {
+                user.update({
+                    score: val.score + ((isPlus) ? 1 : -1)
+                });
+                user.child("reasons").push({
+                    delta: ((isPlus) ? 1 : -1),
+                    reason: reason
+                });
             }
             else {
-                return fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_TABLE_ID}`, {
-                    method: "POST",
-                    headers: {
-                        Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`
-                    },
-                    body: JSON.stringify({
-                        fields: {
-                            userid: userId,
-                            score: 0
-                        }
-                    })
-                }).then((response) => {
-                    return response.json();
-                }).then((data) => {
-                    return data.records[0];
-                })
+                user.set({
+                    score: (isPlus) ? 1 : -1,
+                    reasons: []
+                });
+                user.child("reasons").push({
+                    delta: ((isPlus) ? 1 : -1),
+                    reason: reason
+                });
             }
-        }
-    );
-}
 
-function updateRecordToDatabase(userId, recordId, recordTotal, isPlus) {
-    return fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_TABLE_ID}/${recordId}`, {
-        method: "PUT",
-        headers: {
-            Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`
-        },
-        body: JSON.stringify({
-            fields: {
-                userid: userId,
-                score: (isPlus) ? recordTotal + 1 : recordTotal - 1
-            }
-        })
-    })
-}
-
-function getNewUserTotal(userId) {
-    fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_TABLE_ID}?filterByFormula={userid}='${userId}'`, {
-        method: "GET",
-        headers: {
-            Authorization: `Bearer ${process.env.AIRTABLE_TOKEN}`
-        }
-    }).then((response) => {
-        return response.json();
-    }).then((data) => {
-        return data.records[0].fields.score
+            user.child("score").once("value", function (updatedSnapshot) {
+                resolve(updatedSnapshot.val());
+            });
+        });
     });
 }

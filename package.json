@@ -8,11 +8,12 @@
   "scripts": {
     "netlifyDeploy": "yarn netlifyDeploy:orchid && yarn netlifyDeploy:functions",
     "netlifyDeploy:orchid": "./gradlew orchidBuild -Penv=prod",
-    "netlifyDeploy:functions": "netlify-lambda build ./build/docs/functions/"
+    "netlifyDeploy:functions": "netlify-lambda build ./build/docs/functions/ -c extraConfig.js"
   },
   "dependencies": {},
   "devDependencies": {
     "encoding": "^0.1.12",
+    "firebase-admin": "^5.13.0",
     "netlify-lambda": "^0.4.0",
     "node-fetch": "^2.1.2"
   }
