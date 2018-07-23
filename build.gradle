@@ -1,7 +1,7 @@
 // Buildscript dependencies and plugins
 //----------------------------------------------------------------------------------------------------------------------
 plugins {
-    id "com.eden.orchidPlugin" version "0.9.3"
+    id "com.eden.orchidPlugin" version "0.9.2"
     id "org.jetbrains.kotlin.jvm" version "1.2.51"
 }
 
