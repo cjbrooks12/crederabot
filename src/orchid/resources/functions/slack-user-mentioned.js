@@ -46,23 +46,33 @@ exports.handler = async (event, context) => {
                 const match = body.event.text.match(messageRegex);
                 const userId = match[1];
                 const isPlus = match[2] === "++";
-                const reason = match[3];
+                const reason = match[3].trim();
 
                 return createOrUpdateRecord(userId, isPlus, reason)
                     .then((newScore) => {
-                        console.log(`updated score, now at ${newScore}. About to post to slack`);
+                        console.log(`updated score, now at ${newScore}. Getting slack user display name`);
+                        return getSlackUserInfo(userId, newScore);
+                    })
+                    .then((response) => {
+                        console.log(`updated score, now at ${response.newScore}. About to post to slack`);
                         return postMessageToSlack(userId, body.event.channel, isPlus, newScore, reason);
                     })
 
                     // handle success and error
-                    .then(() => ({
-                        statusCode: 200,
-                        body: "success"
-                    }))
-                    .catch(error => ({
-                        statusCode: 422,
-                        body: `Oops! Something went wrong. ${error}`
-                    }));
+                    .then(() => {
+                        console.log("returning success");
+                        return {
+                            statusCode: 200,
+                            body: "success"
+                        };
+                    })
+                    .catch(error => {
+                        console.log("returning error");
+                        return {
+                            statusCode: 422,
+                            body: `Oops! Something went wrong. ${error}`
+                        }
+                    });
             }
         }
     }
@@ -111,26 +121,39 @@ function createOrUpdateRecord(userId, isPlus, reason) {
     });
 }
 
-function postMessageToSlack(userId, channel, isPlus, newTotal, reason) {
-    console.log(`fetching profile info for user ${userId}`);
-    return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {
-        method: "GET"
-    }).then((response) => {
-        console.log(`converting response to json`);
-        return response.json();
-    }).then((response) => {
-        let message = `${response.profile.real_name_normalized} ${isPlus ? 'gains a point' : 'loses a point'} and now has ${newTotal} points ${(reason) ? `, ${isPlus ? '1' : '-1'} of which is for ${reason}` : ''}`;
-        console.log(`posting message to slack ${userId}: ${message}`);
-        return fetch("https://slack.com/api/chat.postMessage", {
+function getSlackUserInfo(userId, channel, isPlus, newTotal) {
+    return new Promise(resolve => {
+        console.log(`fetching profile info for user ${userId}`);
+        return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {
+            method: "GET"
+        }).then((response) => {
+            console.log(`converting response to json`);
+            return response.json();
+        }).then((response) => {
+            resolve({
+                displayName: response.profile.real_name_normalized,
+                newTotal: newTotal
+            });
+        });
+    });
+}
+
+function postMessageToSlack(userName, channel, isPlus, newTotal, reason) {
+    return new Promise(resolve => {
+        let message = `${userName} ${isPlus ? 'gains a point' : 'loses a point'} and now has ${newTotal} points ${(reason) ? `, ${isPlus ? '1' : '-1'} of which is for ${reason}` : ''}`;
+        console.log(`posting message to slack ${userName}: ${message}`);
+        fetch("https://slack.com/api/chat.postMessage", {
             method: "POST",
             headers: {
                 "content-type": "application/json",
                 Authorization: `Bearer ${process.env.SLACK_TOKEN}`
             },
             body: JSON.stringify({
-                channel: body.event.channel,
+                channel: channel,
                 text: message
             })
+        }).then(() => {
+            resolve("success");
         });
     });
 }
