@@ -49,13 +49,13 @@ exports.handler = async (event, context) => {
                 const reason = match[3].trim();
 
                 return createOrUpdateRecord(userId, isPlus, reason)
-                    .then((newScore) => {
-                        console.log(`updated score, now at ${newScore}. Getting slack user display name`);
-                        return getSlackUserInfo(userId, newScore);
+                    .then((newTotal) => {
+                        console.log(`updated score, now at ${newTotal}. Getting slack user display name`);
+                        return getSlackUserInfo(userId, newTotal);
                     })
                     .then((response) => {
-                        console.log(`updated score, now at ${response.newScore}. About to post to slack`);
-                        return postMessageToSlack(userId, body.event.channel, isPlus, newScore, reason);
+                        console.log(`updated score, now at ${response.newTotal}. About to post to slack`);
+                        return postMessageToSlack(response.displayName, body.event.channel, isPlus, response.newTotal, reason);
                     })
 
                     // handle success and error
@@ -146,7 +146,7 @@ function postMessageToSlack(userName, channel, isPlus, newTotal, reason) {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`
+                Authorization: `Bearer ${process.env.SLACK_TOKEN}`
             },
             body: JSON.stringify({
                 channel: channel,
