@@ -50,6 +50,7 @@ exports.handler = async (event, context) => {
 
                 return createOrUpdateRecord(userId, isPlus, reason)
                     .then((newScore) => {
+                        console.log(`updated score, now at ${newScore}. About to post to slack`);
                         return postMessageToSlack(userId, body.event.channel, isPlus, newScore, reason);
                     })
 
@@ -70,26 +71,6 @@ exports.handler = async (event, context) => {
     return {statusCode: 404, body: "event not handled"};
 };
 
-function postMessageToSlack(userId, channel, isPlus, newTotal, reason) {
-    return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {
-        method: "GET"
-    }).then((response) => {
-        return response.json();
-    }).then((response) => {
-        return fetch("https://slack.com/api/chat.postMessage", {
-            method: "POST",
-            headers: {
-                "content-type": "application/json",
-                Authorization: `Bearer ${process.env.SLACK_TOKEN}`
-            },
-            body: JSON.stringify({
-                channel: body.event.channel,
-                text: `${response.profile.real_name_normalized} ${isPlus ? 'gains a point' : 'loses a point'} and now has ${newTotal} points ${(reason) ? `, ${isPlus ? '1' : '-1'} of which is for ${reason}` : ''}`
-            })
-        });
-    });
-}
-
 function createOrUpdateRecord(userId, isPlus, reason) {
     return new Promise(resolve => {
         let ref = db.ref("crederaPlusPlus");
@@ -101,6 +82,7 @@ function createOrUpdateRecord(userId, isPlus, reason) {
             let val = snapshot.val();
 
             if (val) {
+                console.log(`updating user ${userId}`);
                 user.update({
                     score: val.score + ((isPlus) ? 1 : -1)
                 });
@@ -110,6 +92,7 @@ function createOrUpdateRecord(userId, isPlus, reason) {
                 });
             }
             else {
+                console.log(`creating new user ${userId}`);
                 user.set({
                     score: (isPlus) ? 1 : -1,
                     reasons: []
@@ -121,8 +104,33 @@ function createOrUpdateRecord(userId, isPlus, reason) {
             }
 
             user.child("score").once("value", function (updatedSnapshot) {
+                console.log(`    user ${userId} now has ${updatedSnapshot.val()} points`);
                 resolve(updatedSnapshot.val());
             });
+        });
+    });
+}
+
+function postMessageToSlack(userId, channel, isPlus, newTotal, reason) {
+    console.log(`fetching profile info for user ${userId}`);
+    return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {
+        method: "GET"
+    }).then((response) => {
+        console.log(`converting response to json`);
+        return response.json();
+    }).then((response) => {
+        let message = `${response.profile.real_name_normalized} ${isPlus ? 'gains a point' : 'loses a point'} and now has ${newTotal} points ${(reason) ? `, ${isPlus ? '1' : '-1'} of which is for ${reason}` : ''}`;
+        console.log(`posting message to slack ${userId}: ${message}`);
+        return fetch("https://slack.com/api/chat.postMessage", {
+            method: "POST",
+            headers: {
+                "content-type": "application/json",
+                Authorization: `Bearer ${process.env.SLACK_TOKEN}`
+            },
+            body: JSON.stringify({
+                channel: body.event.channel,
+                text: message
+            })
         });
     });
 }
