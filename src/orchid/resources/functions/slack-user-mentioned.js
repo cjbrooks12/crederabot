@@ -37,20 +37,20 @@ exports.handler = async (event, context) => {
                 const userId = match[1];
                 const isPlus = match[2] === "++";
 
-                console.log(`Handling messages.channel ++ message: ${body.event.text} - ${userId} ${isPlus ? 'gains a point' : 'loses a point'}`);
-                console.log(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`);
                 return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {method: "GET"})
                     .then((response) => {
                         return response.json();
                     })
                     .then((data) => {
                         const userName = data.profile.real_name_normalized;
-                        return fetch(process.env.SLACK_WEBHOOK_URL, {
-                            headers: {
-                                "content-type": "application/json"
-                            },
+                        return fetch("https://slack.com/api/chat.postMessage", {
                             method: "POST",
-                            body: JSON.stringify({text: `${userName} (${userId}) ${isPlus ? 'gains a point' : 'loses a point'}`})
+                            headers: {"content-type": "application/json"},
+                            body: JSON.stringify({
+                                token: process.env.SLACK_TOKEN,
+                                channel: body.event.channel,
+                                text: `${userName} (${userId}) ${isPlus ? 'gains a point' : 'loses a point'}`
+                            })
                         });
                     })
                     .then(() => ({
