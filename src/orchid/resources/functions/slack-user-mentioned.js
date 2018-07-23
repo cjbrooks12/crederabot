@@ -45,9 +45,11 @@ exports.handler = async (event, context) => {
                         const userName = data.profile.real_name_normalized;
                         return fetch("https://slack.com/api/chat.postMessage", {
                             method: "POST",
-                            headers: {"content-type": "application/json"},
+                            headers: {
+                                "content-type": "application/json",
+                                Authorization: `Bearer ${process.env.SLACK_TOKEN}`
+                            },
                             body: JSON.stringify({
-                                token: process.env.SLACK_TOKEN,
                                 channel: body.event.channel,
                                 text: `${userName} (${userId}) ${isPlus ? 'gains a point' : 'loses a point'}`
                             })
