@@ -146,7 +146,7 @@ function postMessageToSlack(userName, channel, isPlus, newTotal, reason) {
             method: "POST",
             headers: {
                 "content-type": "application/json",
-                Authorization: `Bearer ${process.env.SLACK_TOKEN}`
+                Authorization: `Bearer ${process.env.SLACK_BOT_TOKEN}`
             },
             body: JSON.stringify({
                 channel: channel,
