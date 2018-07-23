@@ -12,6 +12,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "encoding": "^0.1.12",
     "netlify-lambda": "^0.4.0",
     "node-fetch": "^2.1.2"
   }
