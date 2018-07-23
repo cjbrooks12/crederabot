@@ -50,29 +50,21 @@ exports.handler = async (event, context) => {
 
                 return createOrUpdateRecord(userId, isPlus, reason)
                     .then((newTotal) => {
-                        console.log(`updated score, now at ${newTotal}. Getting slack user display name`);
                         return getSlackUserInfo(userId, newTotal);
                     })
                     .then((response) => {
-                        console.log(`updated score, now at ${response.newTotal}. About to post to slack`);
                         return postMessageToSlack(response.displayName, body.event.channel, isPlus, response.newTotal, reason);
                     })
 
                     // handle success and error
-                    .then(() => {
-                        console.log("returning success");
-                        return {
-                            statusCode: 200,
-                            body: "success"
-                        };
-                    })
-                    .catch(error => {
-                        console.log("returning error");
-                        return {
-                            statusCode: 422,
-                            body: `Oops! Something went wrong. ${error}`
-                        }
-                    });
+                    .then(() => ({
+                        statusCode: 200,
+                        body: "success"
+                    }))
+                    .catch(error => ({
+                        statusCode: 422,
+                        body: `Oops! Something went wrong. ${error}`
+                    }));
             }
         }
     }
@@ -92,7 +84,6 @@ function createOrUpdateRecord(userId, isPlus, reason) {
             let val = snapshot.val();
 
             if (val) {
-                console.log(`updating user ${userId}`);
                 user.update({
                     score: val.score + ((isPlus) ? 1 : -1)
                 });
@@ -102,7 +93,6 @@ function createOrUpdateRecord(userId, isPlus, reason) {
                 });
             }
             else {
-                console.log(`creating new user ${userId}`);
                 user.set({
                     score: (isPlus) ? 1 : -1,
                     reasons: []
@@ -114,7 +104,6 @@ function createOrUpdateRecord(userId, isPlus, reason) {
             }
 
             user.child("score").once("value", function (updatedSnapshot) {
-                console.log(`    user ${userId} now has ${updatedSnapshot.val()} points`);
                 resolve(updatedSnapshot.val());
             });
         });
@@ -123,11 +112,9 @@ function createOrUpdateRecord(userId, isPlus, reason) {
 
 function getSlackUserInfo(userId, newTotal) {
     return new Promise(resolve => {
-        console.log(`fetching profile info for user ${userId}`);
         return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {
             method: "GET"
         }).then((response) => {
-            console.log(`converting response to json`);
             return response.json();
         }).then((response) => {
             resolve({
@@ -140,8 +127,6 @@ function getSlackUserInfo(userId, newTotal) {
 
 function postMessageToSlack(userName, channel, isPlus, newTotal, reason) {
     return new Promise(resolve => {
-        let message = `${userName} ${isPlus ? 'gains a point' : 'loses a point'} and now has ${newTotal} points ${(reason) ? `, ${isPlus ? '1' : '-1'} of which is for ${reason}` : ''}`;
-        console.log(`posting message to slack ${userName}: ${message}`);
         fetch("https://slack.com/api/chat.postMessage", {
             method: "POST",
             headers: {
@@ -150,7 +135,7 @@ function postMessageToSlack(userName, channel, isPlus, newTotal, reason) {
             },
             body: JSON.stringify({
                 channel: channel,
-                text: message
+                text: `${userName} ${isPlus ? 'gains a point' : 'loses a point'} and now has ${newTotal} points${(reason) ? `, ${isPlus ? '1' : '-1'} of which is for ${reason}` : ''}`
             })
         }).then(() => {
             resolve("success");
