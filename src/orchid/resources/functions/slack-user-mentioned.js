@@ -121,7 +121,7 @@ function createOrUpdateRecord(userId, isPlus, reason) {
     });
 }
 
-function getSlackUserInfo(userId, channel, isPlus, newTotal) {
+function getSlackUserInfo(userId, newTotal) {
     return new Promise(resolve => {
         console.log(`fetching profile info for user ${userId}`);
         return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {
