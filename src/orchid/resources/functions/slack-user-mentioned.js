@@ -39,25 +39,18 @@ exports.handler = async (event, context) => {
 
                 console.log(`Handling messages.channel ++ message: ${body.event.text} - ${userId} ${isPlus ? 'gains a point' : 'loses a point'}`);
                 console.log(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`);
-                return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`,
-                    {
-                        method: "GET",
-                        body: JSON.stringify({text: `${userId} ${isPlus ? 'gains a point' : 'loses a point'}`})
-                    })
+                return fetch(`https://slack.com/api/users.profile.get?token=${process.env.SLACK_TOKEN}&user=${userId}`, {method: "GET"})
                     .then((response) => {
-                        return response.json().then((data) => {
-                            console.log(data);
-
-                            const userName = data.profile.real_name_normalized;
-
-                            return fetch(process.env.SLACK_WEBHOOK_URL,
-                                {
-                                    headers: {
-                                        "content-type": "application/json"
-                                    },
-                                    method: "POST",
-                                    body: JSON.stringify({text: `${userName} (${userId}) ${isPlus ? 'gains a point' : 'loses a point'}`})
-                                })
+                        return response.json();
+                    })
+                    .then((data) => {
+                        const userName = data.profile.real_name_normalized;
+                        return fetch(process.env.SLACK_WEBHOOK_URL, {
+                            headers: {
+                                "content-type": "application/json"
+                            },
+                            method: "POST",
+                            body: JSON.stringify({text: `${userName} (${userId}) ${isPlus ? 'gains a point' : 'loses a point'}`})
                         });
                     })
                     .then(() => ({
