@@ -17,6 +17,7 @@ docs/
 
 # Node Modules
 node_modules/
+kotlin_build/
 
 # Local configuration file (sdk path, etc)
 local.properties

@@ -9,4 +9,4 @@
   base    = ""
   command = "yarn run netlifyDeploy"
   publish = "build/docs/orchid"
-  functions = "build/docs/functions"
+  functions = "build/netlify/functions"

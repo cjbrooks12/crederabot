@@ -11,6 +11,7 @@ responses:
 
 import fetch from "node-fetch";
 import admin from "firebase-admin";
+// import FunctionHandler from "KotlinApp";
 
 let firebase = admin;
 
@@ -24,50 +25,54 @@ firebase.initializeApp({
 let db = firebase.database();
 
 exports.handler = async (event, context) => {
+
     // Only allow POST
     if (event.httpMethod !== "POST") {
         return {statusCode: 405, body: "Method Not Allowed"};
     }
 
-    const body = JSON.parse(event.body);
-    const challenge = body.challenge;
+    // return {statusCode: 200, body: new FunctionHandler(event.httpMethod, "").handle()};
 
-    // handle URL challenge
-    if (body.type === "url_verification") {
-        return {statusCode: 200, body: challenge};
-    }
-
-    // handle Events API callback
-    else if (body.type === "event_callback") {
-        if (body.event.type === "message") {
-            const messageRegex = /<@(\w+)>\s*?(\+\+|--)(.*)/;
-
-            if (messageRegex.test(body.event.text)) {
-                const match = body.event.text.match(messageRegex);
-                const userId = match[1];
-                const isPlus = match[2] === "++";
-                const reason = match[3].trim();
-
-                return createOrUpdateRecord(userId, isPlus, reason)
-                    .then((newTotal) => {
-                        return getSlackUserInfo(userId, newTotal);
-                    })
-                    .then((response) => {
-                        return postMessageToSlack(response.displayName, body.event.channel, isPlus, response.newTotal, reason);
-                    })
-
-                    // handle success and error
-                    .then(() => ({
-                        statusCode: 200,
-                        body: "success"
-                    }))
-                    .catch(error => ({
-                        statusCode: 422,
-                        body: `Oops! Something went wrong. ${error}`
-                    }));
-            }
-        }
-    }
+    //
+    // const body = JSON.parse(event.body);
+    // const challenge = body.challenge;
+    //
+    // // handle URL challenge
+    // if (body.type === "url_verification") {
+    //     return {statusCode: 200, body: challenge};
+    // }
+    //
+    // // handle Events API callback
+    // else if (body.type === "event_callback") {
+    //     if (body.event.type === "message") {
+    //         const messageRegex = /<@(\w+)>\s*?(\+\+|--)(.*)/;
+    //
+    //         if (messageRegex.test(body.event.text)) {
+    //             const match = body.event.text.match(messageRegex);
+    //             const userId = match[1];
+    //             const isPlus = match[2] === "++";
+    //             const reason = match[3].trim();
+    //
+    //             return createOrUpdateRecord(userId, isPlus, reason)
+    //                 .then((newTotal) => {
+    //                     return getSlackUserInfo(userId, newTotal);
+    //                 })
+    //                 .then((response) => {
+    //                     return postMessageToSlack(response.displayName, body.event.channel, isPlus, response.newTotal, reason);
+    //                 })
+    //
+    //                 // handle success and error
+    //                 .then(() => ({
+    //                     statusCode: 200,
+    //                     body: "success"
+    //                 }))
+    //                 .catch(error => ({
+    //                     statusCode: 422,
+    //                     body: `Oops! Something went wrong. ${error}`
+    //                 }));
+    //         }
+    //     }
+    // }
 
     // return error, event not supported
     return {statusCode: 404, body: "event not handled"};
