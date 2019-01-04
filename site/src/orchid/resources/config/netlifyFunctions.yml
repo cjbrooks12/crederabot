@@ -7,4 +7,4 @@ openApi:
       name: MIT
   servers:
     - url: 'http://localhost:9000'
-    - url: '#{$0|baseUrlRoot}/.netlify'
+    - url: '#{$0|baseUrl}/.netlify'

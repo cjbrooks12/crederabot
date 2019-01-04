@@ -1,10 +1,8 @@
 package com.eden.slackbot
 
+import com.caseyjbrooks.clog.Clog
 import com.eden.common.json.JSONElement
-import com.eden.common.util.EdenPair
 import com.eden.orchid.api.OrchidContext
-import com.eden.orchid.api.converters.FlexibleMapConverter
-import com.eden.orchid.api.converters.TypeConverter
 import com.eden.orchid.api.generators.OrchidGenerator
 import com.eden.orchid.api.options.OptionsHolder
 import com.eden.orchid.api.options.annotations.BooleanDefault
@@ -15,7 +13,6 @@ import com.eden.orchid.api.resources.resource.JsonResource
 import com.eden.orchid.api.resources.resource.OrchidResource
 import com.eden.orchid.api.theme.pages.OrchidPage
 import com.eden.orchid.api.theme.pages.OrchidReference
-import com.google.inject.Provider
 import org.json.JSONObject
 import java.util.stream.Stream
 import javax.inject.Inject
@@ -28,7 +25,7 @@ constructor(context: OrchidContext)
     : OrchidGenerator(context, "netlifyFunctions", OrchidGenerator.PRIORITY_LATE) {
 
     @Option
-    @StringDefault("functions")
+    @StringDefault("./../../../../netlify-lambda/src/main/js/")
     lateinit var functionsDir: String
 
     @Option
@@ -41,33 +38,31 @@ constructor(context: OrchidContext)
     override fun startGeneration(pages: Stream<out OrchidPage>?) {
         val functions = context.getLocalResourceEntries(functionsDir, arrayOf("js"), false)
 
-        // render functions in parent directory
-        functions
-                .map { FunctionPage(it) }
-                .map {
-                    it.reference.isUsePrettyUrl = false
-                    it.reference.replacePathSegment(0, "../functions")
-                    it
-                }
-                .forEach { context.renderRaw(it) }
-
         // get list of functions that we can use to generate openApi JSON
         val functionPages = functions
                 .map { FunctionPage(it) }
                 .map {
                     it.reference.isUsePrettyUrl = false
-                    it.reference.replacePathSegment(0, ".netlify/functions")
+                    it.reference.path = ".netlify"
                     it
                 }
 
         // build and render openApi JSON page
         val openApiJson = buildOpenApiJson(functionPages)
-        val openApiJsonPage = OrchidPage(openApiJson, "netlifyOpenApi")
+        val openApiJsonPage = OrchidPage(openApiJson, "netlifyOpenApi", null)
         context.renderRaw(openApiJsonPage)
     }
 
     private fun buildOpenApiJson(functions: List<FunctionPage>): OrchidResource {
         val json = openApi
+
+        json.getJSONObject("info").put("version",
+            Clog.format(json.getJSONObject("info").getString("version"))
+        )
+        json.getJSONArray("servers").forEach {
+            (it as JSONObject).put("url", Clog.format(it.getString("url")))
+        }
+
         val reference = OrchidReference(context, "netlify/openApi.json")
         reference.isUsePrettyUrl = false
 
@@ -78,7 +73,7 @@ constructor(context: OrchidContext)
         val paths = json.getJSONObject("paths")
 
         for (function in functions) {
-            val pathStr = "/${function.reference.relativePath}"
+            val pathStr = "/${function.reference.path}/${function.reference.fileName}"
 
             // get or create object for specific path
             if (!paths.has(pathStr)) {
@@ -92,7 +87,7 @@ constructor(context: OrchidContext)
     }
 
     @Validate
-    class FunctionPage(resource: OrchidResource) : OrchidPage(resource, "netlifyFunction") {
+    class FunctionPage(resource: OrchidResource) : OrchidPage(resource, "netlifyFunction", null) {
 
         @Option
         @NotBlank
@@ -137,41 +132,6 @@ constructor(context: OrchidContext)
                 this
             }
         }
-
-        class ParamConverter @Inject
-        constructor(private val context: OrchidContext, private val mapConverter: Provider<FlexibleMapConverter>) : TypeConverter<OpenApiParam> {
-
-            override fun acceptsClass(clazz: Class<*>): Boolean {
-                return clazz == OpenApiParam::class.java
-            }
-
-            override fun convert(o: Any): EdenPair<Boolean, OpenApiParam> {
-                val itemSource = mapConverter.get().convert(o).second as Map<String, Any>
-
-                val item = OpenApiParam()
-                item.extractOptions(context, itemSource)
-
-                return EdenPair(true, item)
-            }
-        }
-
-        class ResponseConverter @Inject
-        constructor(private val context: OrchidContext, private val mapConverter: Provider<FlexibleMapConverter>) : TypeConverter<OpenApiParamResponse> {
-
-            override fun acceptsClass(clazz: Class<*>): Boolean {
-                return clazz == OpenApiParamResponse::class.java
-            }
-
-            override fun convert(o: Any): EdenPair<Boolean, OpenApiParamResponse> {
-                val itemSource = mapConverter.get().convert(o).second as Map<String, Any>
-
-                val item = OpenApiParamResponse()
-                item.extractOptions(context, itemSource)
-
-                return EdenPair(true, item)
-            }
-        }
-
     }
 
     @Validate

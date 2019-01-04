@@ -1,0 +1,61 @@
+// Buildscript dependencies and plugins
+//----------------------------------------------------------------------------------------------------------------------
+plugins {
+    id "com.eden.orchidPlugin" version "0.15.1"
+    id "org.jetbrains.kotlin.jvm" version "1.3.11"
+}
+
+// Kotlin Setup
+//----------------------------------------------------------------------------------------------------------------------
+sourceCompatibility = JavaVersion.VERSION_1_8
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+// Orchid setup
+//----------------------------------------------------------------------------------------------------------------------
+repositories {
+    jcenter()
+    maven { url 'https://dl.bintray.com/javaeden/Orchid/' }
+}
+
+dependencies {
+    def orchid_version = '0.15.1'
+
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    compile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidPages:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidEditorial:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidSearch:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidSwagger:${orchid_version}"
+    orchidCompile project
+}
+
+project.version = '1'
+
+orchid {
+    version = "${project.version}"
+    theme = "Editorial"
+
+    if (project.hasProperty('env') && project.property('env') == 'prod') {
+        environment = 'production'
+        String isPullRequest = System.getenv('PULL_REQUEST')
+        if(isPullRequest == "true") {
+            baseUrl = System.getenv('DEPLOY_URL')
+        }
+        else if(System.getenv('URL')) {
+            baseUrl = System.getenv('URL')
+        }
+        else {
+            baseUrl = 'http://localhost:8080'
+        }
+    }
+    else {
+        environment = 'debug'
+        baseUrl = 'http://localhost:8080'
+    }
+}
+
+tasks.build.dependsOn orchidBuild

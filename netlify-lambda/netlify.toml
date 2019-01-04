@@ -6,7 +6,4 @@
 #    that is where we will look for package.json/.nvmrc/etc not repo root!
 
 [build]
-  base    = ""
-  Command = "./gradlew build -PdownloadNode -Penv=prod"
-  Publish = "site/build/docs/orchid"
-  Functions = "netlify-lambda/build/netlify/functions"
+  Functions = "build/netlify/functions"
