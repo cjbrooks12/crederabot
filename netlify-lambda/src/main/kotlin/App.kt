@@ -1,13 +1,14 @@
+package com.caseyjbrooks.netlify
 
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asPromise
 import kotlinx.coroutines.async
 import kotlin.js.Promise
 
-class App(env: dynamic, routes: Router.()->Unit) {
+class App(routes: Router.()->Unit) {
 
     val router = RootRouter(routes)
-    val env = EnvVar(env)
+    val env = EnvVar()
 
     @JsName("call")
     fun call(method: String, path: String, body: dynamic): Promise<*> {
@@ -24,7 +25,7 @@ class App(env: dynamic, routes: Router.()->Unit) {
 
 fun app(): App {
     if(App.instance == null) {
-        App.instance = App(js("process.env")) { init() }
+        App.instance = App { init() }
     }
     return App.instance!!
 }

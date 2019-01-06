@@ -1,9 +1,9 @@
-package router
+package com.caseyjbrooks.netlify.router
 
-import Router
-import SubRouter
-import Response
-import FunctionHandler
+import com.caseyjbrooks.netlify.FunctionHandler
+import com.caseyjbrooks.netlify.Response
+import com.caseyjbrooks.netlify.Router
+import com.caseyjbrooks.netlify.SubRouter
 
 fun Router.get(path: String, callback: (dynamic) -> Response) {
     handlers.add(AnonymousFunctionHandler("GET", path, callback))

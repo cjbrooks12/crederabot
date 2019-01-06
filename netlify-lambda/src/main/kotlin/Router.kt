@@ -1,3 +1,5 @@
+package com.caseyjbrooks.netlify
+
 interface ApiHandler {
 
     @JsName("matches")

@@ -9,35 +9,15 @@ responses:
     desc: unexpected error
 ---*/
 
-// import fetch from "node-fetch";
-// import admin from "firebase-admin";
-import {app} from "KotlinApp";
-
-// let firebase = admin;
-//
-// let serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_FILE);
-//
-// firebase.initializeApp({
-//     credential: firebase.credential.cert(serviceAccount),
-//     databaseURL: process.env.FIREBASE_URL
-// });
-//
-// let db = firebase.database();
+import KotlinApp from "KotlinApp";
 
 exports.handler = async (event, context) => {
     console.log("handling request from lambda");
     let method = event.httpMethod;
     let body = JSON.parse(event.body);
-    let path = body.path;
-    return app().call(method, path, body);
+    return KotlinApp.com.caseyjbrooks.netlify.app().call(method, "/slack", body);
 
     // const body = JSON.parse(event.body);
-    // const challenge = body.challenge;
-    //
-    // // handle URL challenge
-    // if (body.type === "url_verification") {
-    //     return {statusCode: 200, body: challenge};
-    // }
     //
     // // handle Events API callback
     // else if (body.type === "event_callback") {
