@@ -7,6 +7,6 @@
 
 [build]
   base    = ""
-  Command = "./gradlew build -PdownloadNode -Penv=prod"
+  Command = "./gradlew npmInstall build -PdownloadNode -Penv=prod"
   Publish = "site/build/docs/orchid"
   Functions = "netlify-lambda/build/netlify/functions"
