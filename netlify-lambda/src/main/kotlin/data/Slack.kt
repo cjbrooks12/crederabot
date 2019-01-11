@@ -3,6 +3,8 @@ package com.caseyjbrooks.netlify.data
 import com.caseyjbrooks.netlify.app
 import kotlin.js.Promise
 
+val USER_MENTION = "<@(\\w+)>\\s*?"
+
 fun getSlackUserInfo(userId: String): Promise<dynamic> {
     val options: dynamic = object{}
     options["method"] = "GET"
