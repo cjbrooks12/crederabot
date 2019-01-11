@@ -11,7 +11,7 @@ class App(routes: Router.()->Unit) {
     val env = EnvVar()
 
     @JsName("call")
-    fun call(method: String, path: String, body: dynamic): Promise<*> {
+    fun call(method: String, path: String, body: dynamic): Promise<Response> {
         return GlobalScope.async { router.call(method, path, body) }.asPromise()
     }
 

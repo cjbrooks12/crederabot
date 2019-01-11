@@ -103,7 +103,7 @@ abstract class FunctionHandler(
         return handle(body)
     }
 
-    protected abstract fun handle(body: dynamic): Response
+    protected abstract suspend fun handle(body: dynamic): Response
 
     override fun getPaths() : List<Pair<String, String>> {
         return listOf(Pair(targetMethod, targetPath))
@@ -113,23 +113,6 @@ abstract class FunctionHandler(
 
 class Response(
     val statusCode: Int,
-    val body: String
-) {
-    override fun toString(): String {
-        return body
-    }
-}
+    val body: dynamic
+)
 
-data class JsonResponse(
-    val statusCode: Int,
-    val body: String
-) {
-    override fun toString(): String {
-        return """
-            {
-                "statusCode": $statusCode,
-                "body": $body
-            }
-            """"
-    }
-}

@@ -7,7 +7,7 @@ import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_MESSAGE_TYPE
 import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_TYPE
 import com.caseyjbrooks.netlify.SLACK_WEBHOOK_PATH
 
-fun Router.slack(type: String, callback: (dynamic) -> Response) {
+fun Router.slack(type: String, callback: suspend (dynamic) -> Response) {
     handlers.add(AnonymousSlackWebhookHandler(type, callback))
 }
 
@@ -15,31 +15,31 @@ fun Router.slackVerification() {
     handlers.add(AnonymousSlackWebhookHandler("url_verification") { body -> Response(200, body.challenge) })
 }
 
-fun Router.slackEvent(eventType: String, callback: (dynamic) -> Response) {
+fun Router.slackEvent(eventType: String, callback: suspend (dynamic) -> Response) {
     handlers.add(AnonymousSlackEventHandler(eventType, callback))
 }
 
-fun Router.slackMessage(messageRegex: Regex, callback: (String, MatchResult?, dynamic) -> Response) {
+fun Router.slackMessage(messageRegex: Regex, callback: suspend (String, MatchResult?, dynamic) -> Response) {
     handlers.add(AnonymousSlackMessageHandler(messageRegex, callback))
 }
 
 open class AnonymousSlackWebhookHandler(
     private val type: String,
-    private val callback: (dynamic) -> Response
+    private val callback: suspend (dynamic) -> Response
 ) : FunctionHandler("POST", SLACK_WEBHOOK_PATH) {
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
         return super.matches(method, path, body) && body.type == type
     }
 
-    override fun handle(body: dynamic): Response {
+    override suspend fun handle(body: dynamic): Response {
         return callback(body)
     }
 }
 
 open class AnonymousSlackEventHandler(
     private val eventType: String,
-    val callback: (dynamic) -> Response
+    val callback: suspend (dynamic) -> Response
 ) : FunctionHandler("POST", SLACK_WEBHOOK_PATH) {
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
@@ -48,14 +48,14 @@ open class AnonymousSlackEventHandler(
                 && body.event.type == eventType
     }
 
-    override fun handle(body: dynamic): Response {
+    override suspend fun handle(body: dynamic): Response {
         return callback(body)
     }
 }
 
 class AnonymousSlackMessageHandler(
     private val messageRegex: Regex,
-    val callback: (String, MatchResult?, dynamic) -> Response
+    val callback: suspend (String, MatchResult?, dynamic) -> Response
 ) : FunctionHandler("POST", SLACK_WEBHOOK_PATH) {
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
@@ -65,7 +65,7 @@ class AnonymousSlackMessageHandler(
                 && messageRegex.matches(body.event.text as String)
     }
 
-    override fun handle(body: dynamic): Response {
+    override suspend fun handle(body: dynamic): Response {
         return callback.invoke(body.event.text, messageRegex.matchEntire(body.event.text), body)
     }
 }

@@ -16,7 +16,7 @@ dependencies {
 }
 
 compileKotlin2Js {
-    kotlinOptions.moduleKind = "umd"
+    kotlinOptions.moduleKind = "commonjs"
     kotlinOptions.sourceMap = true
 }
 
