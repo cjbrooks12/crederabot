@@ -5,6 +5,7 @@ import com.caseyjbrooks.netlify.asReponse
 import com.caseyjbrooks.netlify.data.USER_MENTION
 import com.caseyjbrooks.netlify.data.get
 import com.caseyjbrooks.netlify.data.getFirebaseDatabase
+import com.caseyjbrooks.netlify.data.getSlackUserInfo
 import com.caseyjbrooks.netlify.data.once
 import com.caseyjbrooks.netlify.data.postMessageToSlack
 import com.caseyjbrooks.netlify.data.push
@@ -46,27 +47,25 @@ private fun adjustScore(
     reason: String
 ): Promise<dynamic> {
 
-    val newTotal = 12
-
-    val messageHeader: Promise<String> = if (isUser)
-        Promise.resolve("$userId")
-    else
-        Promise.resolve("$userId")
-
-    val upMessageTrailer: Promise<String> = if (reason.isBlank())
-        Promise.resolve("received a point and is now at $newTotal")
-    else
-        Promise.resolve("received a point for ${reason.trim()} and is now at $newTotal")
-
-    val downMessageTrailer = if (reason.isBlank())
-        Promise.resolve("loses a point and is now at $newTotal")
-    else
-        Promise.resolve("loses a point for ${reason.trim()} and is now at $newTotal")
-
-    val messageTrailer = if (up) upMessageTrailer else downMessageTrailer
-
     return createOrUpdateRecord(userId, isUser, up, reason)
-        .then {
+        .then { newTotal ->
+            val messageHeader: Promise<String> = if (isUser)
+                getSlackUserInfo(userId).then { response: dynamic -> response.profile.real_name_normalized.toString() }
+            else
+                Promise.resolve(userId)
+
+            val upMessageTrailer: Promise<String> = if (reason.isBlank())
+                Promise.resolve("received a point and is now at $newTotal")
+            else
+                Promise.resolve("received a point for ${reason.trim()} and is now at $newTotal")
+
+            val downMessageTrailer = if (reason.isBlank())
+                Promise.resolve("loses a point and is now at $newTotal")
+            else
+                Promise.resolve("loses a point for ${reason.trim()} and is now at $newTotal")
+
+            val messageTrailer = if (up) upMessageTrailer else downMessageTrailer
+
             messageHeader
                 .then { header ->
                     messageTrailer.then { trailer ->
