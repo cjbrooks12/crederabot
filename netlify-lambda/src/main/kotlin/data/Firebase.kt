@@ -1,6 +1,7 @@
 package com.caseyjbrooks.netlify.data
 
 import com.caseyjbrooks.netlify.app
+import kotlinx.coroutines.await
 import kotlin.js.Promise
 
 var instance: FirebaseDatabase? =  null
@@ -20,22 +21,41 @@ external class FirebaseDatabase {
 operator fun FirebaseDatabase.get(ref: String) = this.ref(ref)
 
 external class FirebaseDatabaseRef {
-    fun once(ref: String, cb: (FirebaseDatabaseSnapshot)->Unit)
     fun child(ref: String): FirebaseDatabaseRef
     fun set(data: dynamic, callback: ((dynamic)->Unit)?)
+
+    fun once(ref: String, cb: (FirebaseDatabaseSnapshot)->Unit)
     fun update(data: dynamic, callback: ((dynamic)->Unit)?)
     fun push(): FirebaseDatabaseRef
     fun push(data: dynamic, callback: ((dynamic)->Unit)?)
+
+    fun orderByChild(ref: String): FirebaseDatabaseRef
+    fun orderByKey(): FirebaseDatabaseRef
+    fun orderByValue(): FirebaseDatabaseRef
+
+    fun limitToFirst(count: Int): FirebaseDatabaseRef
+    fun limitToLast(count: Int): FirebaseDatabaseRef
 }
+
+operator fun FirebaseDatabaseRef.get(ref: String) = this.child(ref)
+
+fun FirebaseDatabaseRef.set(data: dynamic): Promise<FirebaseDatabaseSnapshot> = Promise { resolve, _ -> this.set(data, resolve) }
+suspend fun FirebaseDatabaseRef.setNow(data: dynamic): FirebaseDatabaseSnapshot = this.set(data).await()
+
 fun FirebaseDatabaseRef.once(cb: (FirebaseDatabaseSnapshot)->Unit) = this.once("value", cb)
 fun FirebaseDatabaseRef.once(): Promise<FirebaseDatabaseSnapshot> = Promise { resolve, _ -> this.once(resolve) }
+suspend fun FirebaseDatabaseRef.onceNow(): FirebaseDatabaseSnapshot = this.once().await()
+
 fun FirebaseDatabaseRef.update(data: dynamic): Promise<FirebaseDatabaseSnapshot> = Promise { resolve, _ -> this.update(data, resolve) }
-fun FirebaseDatabaseRef.set(data: dynamic): Promise<FirebaseDatabaseSnapshot> = Promise { resolve, _ -> this.set(data, resolve) }
+suspend fun FirebaseDatabaseRef.updateNow(data: dynamic): FirebaseDatabaseSnapshot = this.update(data).await()
+
 fun FirebaseDatabaseRef.push(data: dynamic): Promise<FirebaseDatabaseSnapshot> = Promise { resolve, _ -> this.push(data, resolve) }
-operator fun FirebaseDatabaseRef.get(ref: String) = this.child(ref)
+suspend fun FirebaseDatabaseRef.pushNow(data: dynamic): FirebaseDatabaseSnapshot = this.push(data).await()
 
 external class FirebaseDatabaseSnapshot {
     fun `val`(): dynamic
+    fun forEach(cb: (FirebaseDatabaseSnapshot)->Boolean)
+    fun numChildren(): Int
 }
 fun FirebaseDatabaseSnapshot.get(): dynamic = this.`val`()
 

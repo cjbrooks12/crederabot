@@ -1,6 +1,7 @@
 package com.caseyjbrooks.netlify.data
 
 import com.caseyjbrooks.netlify.app
+import kotlinx.coroutines.await
 import kotlin.js.Promise
 
 val USER_MENTION = "<@(\\w+)>\\s*?"
@@ -16,6 +17,10 @@ fun getSlackUserInfo(userId: String): Promise<dynamic> {
         .then<dynamic> { it.json() }
 }
 
+suspend fun getSlackUsername(userId: String): String {
+    return getSlackUserInfo(userId).then { response: dynamic -> response.profile.real_name_normalized.toString() }.await()
+}
+
 fun getSlackUsers(): Promise<dynamic> {
     val options: dynamic = object{}
     options["method"] = "GET"
@@ -27,7 +32,7 @@ fun getSlackUsers(): Promise<dynamic> {
         .then<dynamic> { it.json() }
 }
 
-fun postMessageToSlack(channel: String, message: String): Promise<dynamic> {
+fun postMessageToSlack(channel: String, message: String, attachments: List<String> = emptyList()): Promise<dynamic> {
     val options: dynamic = object{}
     options["method"] = "POST"
 
@@ -38,9 +43,21 @@ fun postMessageToSlack(channel: String, message: String): Promise<dynamic> {
     options["body"] = object{}
     options["body"]["channel"] = channel
     options["body"]["text"] = message
-    options["body"] = JSON.stringify(options["body"])
 
+    if(attachments.isNotEmpty()) {
+        val attachmentsArray = mutableListOf<dynamic>()
+
+        for(attachment in attachments) {
+            val attachmentObject: dynamic = object{}
+            attachmentObject["text"] = attachment
+            attachmentsArray.add(attachmentObject)
+        }
+        options["body"]["attachments"] = attachmentsArray.toTypedArray()
+    }
+
+    options["body"] = JSON.stringify(options["body"])
     return Fetch
         .fetch("https://slack.com/api/chat.postMessage", options)
         .then<dynamic> { it.json() }
 }
+suspend fun postMessageToSlackNow(channel: String, message: String) = postMessageToSlack(channel, message).await()
