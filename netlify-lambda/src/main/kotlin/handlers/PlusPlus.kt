@@ -20,8 +20,8 @@ val PLUS_PLUS_THING_REGEX = "^(.+?)\\s*?\\+\\+(.*)".toRegex()
 val MINUS_MINUS_USER_REGEX = "$USER_MENTION--(.*)".toRegex()
 val MINUS_MINUS_THING_REGEX = "^(.+?)\\s*?--(.*)".toRegex()
 
-val TOP_X_MENTION_REGEX = "top\\s*?(\\d+)".toRegex()
-val BOTTOM_X_MENTION_REGEX = "bottom\\s*?(\\d+)".toRegex()
+val TOP_X_MENTION_REGEX = ".*?top\\s*?(\\d+)".toRegex()
+val BOTTOM_X_MENTION_REGEX = ".*?bottom\\s*?(\\d+)".toRegex()
 
 fun Router.plusPlus() {
     slackMessage(PLUS_PLUS_USER_REGEX) { _, matchResult, body ->
