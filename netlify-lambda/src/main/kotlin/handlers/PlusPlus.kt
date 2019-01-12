@@ -11,6 +11,7 @@ import com.caseyjbrooks.netlify.data.postMessageToSlack
 import com.caseyjbrooks.netlify.data.push
 import com.caseyjbrooks.netlify.data.set
 import com.caseyjbrooks.netlify.data.update
+import com.caseyjbrooks.netlify.router.slackMention
 import com.caseyjbrooks.netlify.router.slackMessage
 import kotlin.js.Promise
 
@@ -18,6 +19,9 @@ val PLUS_PLUS_USER_REGEX = "$USER_MENTION\\+\\+(.*)".toRegex()
 val PLUS_PLUS_THING_REGEX = "^(.+?)\\s*?\\+\\+(.*)".toRegex()
 val MINUS_MINUS_USER_REGEX = "$USER_MENTION--(.*)".toRegex()
 val MINUS_MINUS_THING_REGEX = "^(.+?)\\s*?--(.*)".toRegex()
+
+val TOP_X_MENTION_REGEX = "top\\s*?(\\d+)".toRegex()
+val BOTTOM_X_MENTION_REGEX = "bottom\\s*?(\\d+)".toRegex()
 
 fun Router.plusPlus() {
     slackMessage(PLUS_PLUS_USER_REGEX) { _, matchResult, body ->
@@ -36,6 +40,15 @@ fun Router.plusPlus() {
     slackMessage(MINUS_MINUS_THING_REGEX) { _, matchResult, body ->
         val (thing, reason) = matchResult!!.destructured
         adjustScore(body.team_id, body.event.channel, body.event.user, thing, false, false, reason).asReponse()
+    }
+
+    slackMention(TOP_X_MENTION_REGEX) { _, matchResult, body ->
+        val (count) = matchResult!!.destructured
+        showTop(body.team_id, body.event.channel, count.toInt()).asReponse()
+    }
+    slackMention(BOTTOM_X_MENTION_REGEX) { _, matchResult, body ->
+        val (count) = matchResult!!.destructured
+        showBottom(body.team_id, body.event.channel, count.toInt()).asReponse()
     }
 }
 
@@ -125,4 +138,20 @@ fun createOrUpdateRecord(
             // return the new score as an int
             (it.get() as Int)
         }
+}
+
+fun showTop(
+    team: String,
+    channel: String,
+    amount: Int
+): Promise<dynamic> {
+    return postMessageToSlack(channel, "Here are the top $amount:")
+}
+
+fun showBottom(
+    team: String,
+    channel: String,
+    amount: Int
+): Promise<dynamic> {
+    return postMessageToSlack(channel, "Here are the bottom $amount:")
 }
