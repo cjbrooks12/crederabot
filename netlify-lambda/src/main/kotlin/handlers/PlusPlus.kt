@@ -15,9 +15,9 @@ import com.caseyjbrooks.netlify.router.slackMessage
 import kotlin.js.Promise
 
 val PLUS_PLUS_USER_REGEX = "$USER_MENTION\\+\\+(.*)".toRegex()
-val PLUS_PLUS_THING_REGEX = "(\\w+)\\s*?\\+\\+(.*)".toRegex()
+val PLUS_PLUS_THING_REGEX = "^(.+?)\\s*?\\+\\+(.*)".toRegex()
 val MINUS_MINUS_USER_REGEX = "$USER_MENTION--(.*)".toRegex()
-val MINUS_MINUS_THING_REGEX = "(\\w+)\\s*?--(.*)".toRegex()
+val MINUS_MINUS_THING_REGEX = "^(.+?)\\s*?--(.*)".toRegex()
 
 fun Router.plusPlus() {
     slackMessage(PLUS_PLUS_USER_REGEX) { _, matchResult, body ->
