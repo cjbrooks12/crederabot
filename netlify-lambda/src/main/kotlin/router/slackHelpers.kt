@@ -6,6 +6,7 @@ import com.caseyjbrooks.netlify.Router
 import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_MESSAGE_TYPE
 import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_TYPE
 import com.caseyjbrooks.netlify.SLACK_WEBHOOK_PATH
+import com.caseyjbrooks.netlify.app
 
 fun Router.slack(type: String, callback: suspend (dynamic) -> Response) {
     handlers.add(AnonymousSlackWebhookHandler(type, callback))
@@ -32,8 +33,8 @@ open class AnonymousSlackWebhookHandler(
         return super.matches(method, path, body) && body.type == type
     }
 
-    override suspend fun handle(body: dynamic): Response {
-        return callback(body)
+    override suspend fun handle(body: dynamic): Response = verify(body) {
+        callback(body)
     }
 }
 
@@ -48,8 +49,8 @@ open class AnonymousSlackEventHandler(
                 && body.event.type == eventType
     }
 
-    override suspend fun handle(body: dynamic): Response {
-        return callback(body)
+    override suspend fun handle(body: dynamic): Response = verify(body) {
+        callback(body)
     }
 }
 
@@ -65,7 +66,18 @@ class AnonymousSlackMessageHandler(
                 && messageRegex.matches(body.event.text as String)
     }
 
-    override suspend fun handle(body: dynamic): Response {
-        return callback.invoke(body.event.text, messageRegex.matchEntire(body.event.text), body)
+    override suspend fun handle(body: dynamic): Response = verify(body) {
+        callback.invoke(body.event.text, messageRegex.matchEntire(body.event.text), body)
+    }
+}
+
+suspend fun verify(body: dynamic, callback: suspend () -> Response): Response {
+    println("body.token=" + body.token)
+    println("app().env.slackVerificationToken=" + app().env.slackVerificationToken)
+    return if(body.token == app().env.slackVerificationToken) {
+        return callback()
+    }
+    else {
+        Response(403, "Not Authorized")
     }
 }

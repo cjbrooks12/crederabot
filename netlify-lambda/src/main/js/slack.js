@@ -1,6 +1,6 @@
 /*---
 method: 'post'
-summary: 'Dont be shy, say hello!'
+summary: 'Endpoint to handle Slack Events API.'
 parameters: []
 responses:
   - status: '200'
@@ -12,6 +12,7 @@ responses:
 import KotlinApp from "KotlinApp";
 
 exports.handler = async (event, context) => {
+    console.log(JSON.parse(event.body));
     return KotlinApp.com.caseyjbrooks.netlify.app()
         .call(event.httpMethod, "/slack", JSON.parse(event.body))
         .then((response) => {
@@ -21,7 +22,4 @@ exports.handler = async (event, context) => {
                 body: JSON.stringify(response.body)
             }
         });
-
-    // return error, event not supported
-    return {statusCode: 404, body: "event not handled"};
 };

@@ -31,26 +31,28 @@ constructor(context: OrchidContext)
     @Option
     lateinit var openApi: JSONObject
 
-    override fun startIndexing(): MutableList<out OrchidPage>? {
-        return null
-    }
-
-    override fun startGeneration(pages: Stream<out OrchidPage>?) {
+    override fun startIndexing(): List<OrchidPage> {
         val functions = context.getLocalResourceEntries(functionsDir, arrayOf("js"), false)
 
         // get list of functions that we can use to generate openApi JSON
         val functionPages = functions
-                .map { FunctionPage(it) }
-                .map {
-                    it.reference.isUsePrettyUrl = false
-                    it.reference.path = ".netlify"
-                    it
-                }
+            .map { Clog.v("found function at {}", it.toString()); it }
+            .map { FunctionPage(it) }
+            .map {
+                it.reference.isUsePrettyUrl = false
+                it.reference.path = ".netlify"
+                it.reference.fileName = it.reference.originalFileName.replace(".js", "")
+                it
+            }
 
         // build and render openApi JSON page
         val openApiJson = buildOpenApiJson(functionPages)
         val openApiJsonPage = OrchidPage(openApiJson, "netlifyOpenApi", null)
-        context.renderRaw(openApiJsonPage)
+        return listOf(openApiJsonPage)
+    }
+
+    override fun startGeneration(pages: Stream<out OrchidPage>) {
+        pages.forEach { context.renderRaw(it) }
     }
 
     private fun buildOpenApiJson(functions: List<FunctionPage>): OrchidResource {
