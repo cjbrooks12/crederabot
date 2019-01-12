@@ -22,35 +22,40 @@ val MINUS_MINUS_THING_REGEX = "^(.+?)\\s*?--(.*)".toRegex()
 fun Router.plusPlus() {
     slackMessage(PLUS_PLUS_USER_REGEX) { _, matchResult, body ->
         val (userId, reason) = matchResult!!.destructured
-        adjustScore(body.event.channel, userId, true, true, reason).asReponse()
+        adjustScore(body.team_id, body.event.channel, body.event.user, userId, true, true, reason).asReponse()
     }
     slackMessage(PLUS_PLUS_THING_REGEX) { _, matchResult, body ->
         val (thing, reason) = matchResult!!.destructured
-        adjustScore(body.event.channel, thing, false, true, reason).asReponse()
+        adjustScore(body.team_id, body.event.channel, body.event.user, thing, false, true, reason).asReponse()
     }
 
     slackMessage(MINUS_MINUS_USER_REGEX) { _, matchResult, body ->
         val (userId, reason) = matchResult!!.destructured
-        adjustScore(body.event.channel, userId, true, false, reason).asReponse()
+        adjustScore(body.team_id, body.event.channel, body.event.user, userId, true, false, reason).asReponse()
     }
     slackMessage(MINUS_MINUS_THING_REGEX) { _, matchResult, body ->
         val (thing, reason) = matchResult!!.destructured
-        adjustScore(body.event.channel, thing, false, false, reason).asReponse()
+        adjustScore(body.team_id, body.event.channel, body.event.user, thing, false, false, reason).asReponse()
     }
 }
 
 private fun adjustScore(
+    team: String,
     channel: String,
+    fromUser: String,
     userId: String,
     isUser: Boolean,
     up: Boolean,
     reason: String
 ): Promise<dynamic> {
 
-    return createOrUpdateRecord(userId, isUser, up, reason)
+    return createOrUpdateRecord(team, fromUser, userId, isUser, up, reason)
         .then { newTotal ->
             val messageHeader: Promise<String> = if (isUser)
-                getSlackUserInfo(userId).then { response: dynamic -> response.profile.real_name_normalized.toString() }
+                getSlackUserInfo(userId).then { response: dynamic ->
+                    println("slack user info=" + JSON.stringify(response))
+                    response.profile.real_name_normalized.toString()
+                }
             else
                 Promise.resolve(userId)
 
@@ -80,12 +85,14 @@ private fun adjustScore(
 }
 
 fun createOrUpdateRecord(
+    teamId: String,
+    fromUser: String,
     userId: String,
     isUser: Boolean,
     up: Boolean,
     reason: String
 ): Promise<Int> {
-    val user = getFirebaseDatabase()["crederaPlusPlus"][if (isUser) "users" else "things"][userId]
+    val user = getFirebaseDatabase()["crederaPlusPlus"][teamId][if (isUser) "users" else "things"][userId]
 
     return user
         .once()
@@ -107,6 +114,7 @@ fun createOrUpdateRecord(
             val reasonsUpdate: dynamic = object {}
             reasonsUpdate["delta"] = if (up) 1 else -1
             reasonsUpdate["reason"] = reason.trim()
+            reasonsUpdate["from"] = fromUser
             user.child("reasons").push(reasonsUpdate)
         }
         .then {
@@ -115,6 +123,6 @@ fun createOrUpdateRecord(
         }
         .then {
             // return the new score as an int
-            (it.get() as Int) + if (up) 1 else -1
+            (it.get() as Int)
         }
 }

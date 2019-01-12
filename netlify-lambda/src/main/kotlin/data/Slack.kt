@@ -9,7 +9,7 @@ fun getSlackUserInfo(userId: String): Promise<dynamic> {
     val options: dynamic = object{}
     options["method"] = "GET"
     options["headers"] = object{}
-    options["headers"]["Authorization"] = "Bearer ${app().env.slackToken}"
+    options["headers"]["Authorization"] = "Bearer ${app().env.slackAppToken}"
 
     return Fetch
         .fetch("https://slack.com/api/users.profile.get?user=$userId", options)
@@ -20,7 +20,7 @@ fun getSlackUsers(): Promise<dynamic> {
     val options: dynamic = object{}
     options["method"] = "GET"
     options["headers"] = object{}
-    options["headers"]["Authorization"] = "Bearer ${app().env.slackToken}"
+    options["headers"]["Authorization"] = "Bearer ${app().env.slackAppToken}"
 
     return Fetch
         .fetch("https://slack.com/api/users.list", options)
@@ -32,7 +32,7 @@ fun postMessageToSlack(channel: String, message: String): Promise<dynamic> {
     options["method"] = "POST"
 
     options["headers"] = object{}
-    options["headers"]["Authorization"] = "Bearer ${app().env.slackToken}"
+    options["headers"]["Authorization"] = "Bearer ${app().env.slackBotToken}"
     options["headers"]["content-type"] = "application/json"
 
     options["body"] = object{}
