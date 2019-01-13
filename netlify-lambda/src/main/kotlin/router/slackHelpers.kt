@@ -20,9 +20,6 @@ fun Router.slack(type: String, callback: suspend (dynamic) -> Response) {
 fun Router.slackVerification() {
     handlers.add(AnonymousSlackWebhookHandler(SLACK_URL_VERIFICATION_TYPE) { body -> Response(200, body.challenge) })
 }
-fun Router.slackOAuthFlow() {
-
-}
 fun Router.slackMessageDefault() {
     handlers.add(AnonymousSlackMessageHandler(".*".toRegex()) { _,  _, _ -> Response(200, "No message matched, but that's OK!") })
 }

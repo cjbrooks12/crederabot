@@ -1,9 +1,9 @@
 package com.caseyjbrooks.netlify
 
 import com.caseyjbrooks.netlify.handlers.plusPlus
+import com.caseyjbrooks.netlify.handlers.slackOAuthFlow
 import com.caseyjbrooks.netlify.router.get
 import com.caseyjbrooks.netlify.router.slackMessageDefault
-import com.caseyjbrooks.netlify.router.slackOAuthFlow
 import com.caseyjbrooks.netlify.router.slackVerification
 
 fun Router.init() {

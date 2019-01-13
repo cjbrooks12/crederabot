@@ -9,5 +9,8 @@ class EnvVar {
     val slackAppToken: String = _env.SLACK_APP_TOKEN
     val slackBotToken: String = _env.SLACK_BOT_TOKEN
     val slackVerificationToken: String = _env.SLACK_VERIFICATION_TOKEN
+    val slackClientId: String = _env.SLACK_CLIENT_ID
+    val slackClientSecret: String = _env.SLACK_CLIENT_SECRET
+    val slackRedirectUrl: String = _env.SLACK_REDIRECT_URL
 
 }
