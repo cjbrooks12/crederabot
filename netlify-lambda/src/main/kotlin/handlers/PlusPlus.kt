@@ -206,7 +206,7 @@ suspend fun showScore(
 
     val message: String
     if (data != null) {
-        message = "${data.username} has ${data.score}"
+        message = "${data.username} has ${data.score} points"
     } else {
         message = "${if(isUser) "Who" else "What"} the %#&* is $userId?!"
     }
