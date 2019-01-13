@@ -3,11 +3,13 @@ package com.caseyjbrooks.netlify.handlers
 import com.caseyjbrooks.netlify.Response
 import com.caseyjbrooks.netlify.Router
 import com.caseyjbrooks.netlify.data.FirebaseDatabaseRef
+import com.caseyjbrooks.netlify.data.SlackSecureData
 import com.caseyjbrooks.netlify.data.THING_MENTION
 import com.caseyjbrooks.netlify.data.USER_MENTION
 import com.caseyjbrooks.netlify.data.asList
 import com.caseyjbrooks.netlify.data.get
 import com.caseyjbrooks.netlify.data.getFirebaseDatabase
+import com.caseyjbrooks.netlify.data.getSlackSecureDataNow
 import com.caseyjbrooks.netlify.data.getSlackUsername
 import com.caseyjbrooks.netlify.data.onceNow
 import com.caseyjbrooks.netlify.data.postMessageToSlackNow
@@ -78,7 +80,7 @@ fun Router.plusPlus() {
 
     // get help
     slackMention("halp", "help") { _, _, body ->
-        showHelp(body.event.channel)
+        showHelp(body.team_id, body.event.channel)
     }
 }
 
@@ -91,11 +93,12 @@ private suspend fun adjustScore(
     up: Boolean,
     reason: String
 ): Response {
+    val secure = getSlackSecureDataNow(team)
     if(fromUser == userId) {
-        postMessageToSlackNow(channel, "No.")
+        postMessageToSlackNow(secure, channel, "No.")
     }
     else {
-        val (userName, newTotal) = createOrUpdateRecord(team, fromUser, userId, isUser, up, reason)
+        val (userName, newTotal) = createOrUpdateRecord(secure, team, fromUser, userId, isUser, up, reason)
 
         var message = "$userName "
 
@@ -113,13 +116,14 @@ private suspend fun adjustScore(
             message += "for ${reason.trim()} and is now at $newTotal"
         }
 
-        postMessageToSlackNow(channel, message)
+        postMessageToSlackNow(secure, channel, message)
     }
 
     return success()
 }
 
 suspend fun createOrUpdateRecord(
+    secure: SlackSecureData,
     teamId: String,
     fromUser: String,
     userId: String,
@@ -143,7 +147,7 @@ suspend fun createOrUpdateRecord(
 
         // only need to call the Slack API once, and then we can cache it in the db
         if (isUser) {
-            scoreUpdate["username"] = getSlackUsername(userId)
+            scoreUpdate["username"] = getSlackUsername(secure, userId)
         }
         else {
             scoreUpdate["username"] = userId
@@ -170,6 +174,8 @@ suspend fun showLeaderboard(
     count: Int,
     top: Boolean
 ): Response {
+    val secure = getSlackSecureDataNow(teamId)
+
     val requestedCount = if(count <= 0) 10 else if(count >= 25) 25 else count
 
     var usersRef: FirebaseDatabaseRef = getFirebaseDatabase()["crederaPlusPlus"][teamId]["users"]
@@ -202,7 +208,7 @@ suspend fun showLeaderboard(
     }
 
     val message = "Here are the ${if(top) "top" else "bottom"} $actualCount:\n$itemsMessage"
-    postMessageToSlackNow(channel, message)
+    postMessageToSlackNow(secure, channel, message)
 
     return success()
 }
@@ -213,6 +219,7 @@ suspend fun showScore(
     userId: String,
     isUser: Boolean
 ): Response {
+    val secure = getSlackSecureDataNow(teamId)
     val user = getFirebaseDatabase()["crederaPlusPlus"][teamId]["users"][userId]
 
     val data = user.onceNow().get()
@@ -224,7 +231,7 @@ suspend fun showScore(
         message = "${if(isUser) "Who" else "What"} the %#&* is $userId?!"
     }
 
-    postMessageToSlackNow(channel, message)
+    postMessageToSlackNow(secure, channel, message)
 
     return success()
 }
@@ -236,6 +243,8 @@ suspend fun showReasonsWhy(
     isUser: Boolean,
     count: Int?
 ): Response {
+    val secure = getSlackSecureDataNow(teamId)
+
     val requestedCount = if(count != null)
         if(count <= 0) 10 else if(count >= 25) 25 else count
     else
@@ -265,14 +274,16 @@ suspend fun showReasonsWhy(
         message = "${if(isUser) "Who" else "What"} the %#&* is $userId?!"
     }
 
-    postMessageToSlackNow(channel, message)
+    postMessageToSlackNow(secure, channel, message)
 
     return success()
 }
 
 suspend fun showHelp(
+    teamId: String,
     channel: String
 ): Response {
+    val secure = getSlackSecureDataNow(teamId)
 
     val message = """
         |> [@user/thing]++
@@ -284,7 +295,7 @@ suspend fun showHelp(
         |> @plusplus halp
     """.trimMargin()
 
-    postMessageToSlackNow(channel, message)
+    postMessageToSlackNow(secure, channel, message)
 
     return success()
 }

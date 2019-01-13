@@ -36,6 +36,7 @@ fun Router.slackOAuthFlow() {
 
             val secureData: dynamic = object {}
             secureData["accessToken"] = jsonResponse.access_token
+            secureData["authorizedBy"] = jsonResponse.user_id
             secureData["botUserId"] = jsonResponse.bot.bot_user_id
             secureData["botAccessToken"] = jsonResponse.bot.bot_access_token
 
