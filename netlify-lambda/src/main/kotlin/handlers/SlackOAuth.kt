@@ -4,11 +4,11 @@ import com.caseyjbrooks.netlify.Response
 import com.caseyjbrooks.netlify.Router
 import com.caseyjbrooks.netlify.app
 import com.caseyjbrooks.netlify.data.Fetch
+import com.caseyjbrooks.netlify.data.fetchJsonNow
 import com.caseyjbrooks.netlify.data.get
 import com.caseyjbrooks.netlify.data.getFirebaseDatabase
 import com.caseyjbrooks.netlify.data.setNow
 import com.caseyjbrooks.netlify.router.get
-import kotlinx.coroutines.await
 
 fun Router.slackOAuthFlow() {
 
@@ -23,9 +23,7 @@ fun Router.slackOAuthFlow() {
         val options: dynamic = object {}
         options["method"] = "GET"
 
-        val response: String = Fetch.fetch(url, options).await()
-
-        val jsonResponse: dynamic = JSON.parse(response)
+        val jsonResponse: dynamic = Fetch.fetchJsonNow(url, options)
         console.log(jsonResponse)
 
         if (!jsonResponse.ok) {

@@ -13,8 +13,8 @@ theme:
     - type: 'page'
       itemId: 'API Reference'
     - type: 'link'
-      title: 'Slack Docs'
-      url: '/slack'
+      title: 'Add To Slack'
+      url: 'https://slack.com/oauth/authorize?client_id=402674575044.402789997363&scope=channels:history,users.profile:read,chat:write:bot,bot,users:read'
 
 allPages:
   layout: single

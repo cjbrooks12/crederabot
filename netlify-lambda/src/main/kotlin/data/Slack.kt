@@ -14,9 +14,7 @@ fun getSlackUserInfo(userId: String): Promise<dynamic> {
     options["headers"] = object{}
     options["headers"]["Authorization"] = "Bearer ${app().env.slackAppToken}"
 
-    return Fetch
-        .fetch("https://slack.com/api/users.profile.get?user=$userId", options)
-        .then<dynamic> { it.json() }
+    return Fetch.fetchJson("https://slack.com/api/users.profile.get?user=$userId", options)
 }
 
 suspend fun getSlackUsername(userId: String): String {
@@ -29,9 +27,7 @@ fun getSlackUsers(): Promise<dynamic> {
     options["headers"] = object{}
     options["headers"]["Authorization"] = "Bearer ${app().env.slackAppToken}"
 
-    return Fetch
-        .fetch("https://slack.com/api/users.list", options)
-        .then<dynamic> { it.json() }
+    return Fetch.fetchJson("https://slack.com/api/users.list", options)
 }
 
 fun postMessageToSlack(channel: String, message: String, attachments: List<String> = emptyList()): Promise<dynamic> {
@@ -58,8 +54,6 @@ fun postMessageToSlack(channel: String, message: String, attachments: List<Strin
     }
 
     options["body"] = JSON.stringify(options["body"])
-    return Fetch
-        .fetch("https://slack.com/api/chat.postMessage", options)
-        .then<dynamic> { it.json() }
+    return Fetch.fetchJson("https://slack.com/api/chat.postMessage", options)
 }
 suspend fun postMessageToSlackNow(channel: String, message: String) = postMessageToSlack(channel, message).await()
