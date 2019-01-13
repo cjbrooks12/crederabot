@@ -17,11 +17,7 @@ sealed class Router : ApiHandler {
     val handlers: MutableList<ApiHandler> = mutableListOf()
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
-        return handlers.any {
-            val matches = it.matches(method, path , body)
-            println("checking router for '[$method] $path' ($matches)")
-            matches
-        }
+        return handlers.any { it.matches(method, path , body) }
     }
 
     override suspend fun call(method: String, path: String, body: dynamic): Response {
@@ -41,7 +37,6 @@ class RootRouter(callback: Router.()->Unit) : Router() {
     }
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
-        println("checking root router for '[$method] $path'")
         return true
     }
 
@@ -75,7 +70,6 @@ class SubRouter(val context: String, callback: Router.()->Unit) : Router() {
     }
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
-        println("checking subrouter at '$context' '[$method] $path'")
         return path.startsWith(context) && super.matches(method, path.removePrefix("$context/"), body)
     }
 
@@ -95,7 +89,6 @@ abstract class FunctionHandler(
 ) : ApiHandler {
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
-        println("checking function handler at '[$targetMethod] $targetPath' for '[$method] $path'")
         return method == targetMethod && path == targetPath
     }
 

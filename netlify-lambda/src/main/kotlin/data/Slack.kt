@@ -4,7 +4,9 @@ import com.caseyjbrooks.netlify.app
 import kotlinx.coroutines.await
 import kotlin.js.Promise
 
-val USER_MENTION = "<@(\\w+)>\\s*?"
+const val USER_MENTION = "\\s*?<@(\\w+)>\\s*?"
+const val USER_MENTION_NO_CAPTURE = "\\s*?<@\\w+>\\s*?"
+const val THING_MENTION = "\\s*?(.+)\\s*?"
 
 fun getSlackUserInfo(userId: String): Promise<dynamic> {
     val options: dynamic = object{}

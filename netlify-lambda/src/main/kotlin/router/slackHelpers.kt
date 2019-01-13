@@ -9,34 +9,53 @@ import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_TYPE
 import com.caseyjbrooks.netlify.SLACK_URL_VERIFICATION_TYPE
 import com.caseyjbrooks.netlify.SLACK_WEBHOOK_PATH
 import com.caseyjbrooks.netlify.app
+import com.caseyjbrooks.netlify.data.USER_MENTION_NO_CAPTURE
+
+// standard Slack API handlers
+//----------------------------------------------------------------------------------------------------------------------
 
 fun Router.slack(type: String, callback: suspend (dynamic) -> Response) {
     handlers.add(AnonymousSlackWebhookHandler(type, callback))
 }
-
 fun Router.slackVerification() {
     handlers.add(AnonymousSlackWebhookHandler(SLACK_URL_VERIFICATION_TYPE) { body -> Response(200, body.challenge) })
 }
-
 fun Router.slackOAuthFlow() {
 
 }
-
 fun Router.slackMessageDefault() {
     handlers.add(AnonymousSlackMessageHandler(".*".toRegex()) { _,  _, _ -> Response(200, "No message matched, but that's OK!") })
 }
-
 fun Router.slackEvent(eventType: String, callback: suspend (dynamic) -> Response) {
     handlers.add(AnonymousSlackEventHandler(eventType, callback))
 }
 
+// Handle generic slack messages
+//----------------------------------------------------------------------------------------------------------------------
+
 fun Router.slackMessage(messageRegex: Regex, callback: suspend (String, MatchResult?, dynamic) -> Response) {
     handlers.add(AnonymousSlackMessageHandler(messageRegex, callback))
 }
+fun Router.slackMessage(vararg messageStrings: String, callback: suspend (String, MatchResult?, dynamic) -> Response) {
+    for(messageString in messageStrings) {
+        slackMessage(messageString.toRegex(), callback)
+    }
+}
+
+// Handle messages mentioned at the bot user
+//----------------------------------------------------------------------------------------------------------------------
 
 fun Router.slackMention(messageRegex: Regex, callback: suspend (String, MatchResult?, dynamic) -> Response) {
-    handlers.add(AnonymousSlackMentionHandler(messageRegex, callback))
+    handlers.add(AnonymousSlackMentionHandler("^$USER_MENTION_NO_CAPTURE\\s+?${messageRegex.pattern}".toRegex(), callback))
 }
+fun Router.slackMention(vararg messageStrings: String, callback: suspend (String, MatchResult?, dynamic) -> Response) {
+    for(messageString in messageStrings) {
+        slackMention(messageString.toRegex(), callback)
+    }
+}
+
+// API handler implementations
+//----------------------------------------------------------------------------------------------------------------------
 
 open class AnonymousSlackWebhookHandler(
     private val type: String,
