@@ -12,8 +12,16 @@ responses:
 import KotlinApp from "KotlinApp";
 
 exports.handler = async (event, context) => {
+    let body;
+    try {
+        body = JSON.parse(event.body);
+    }
+    catch {
+        body = {};
+    }
+    body.query = event.queryStringParameters;
     return KotlinApp.com.caseyjbrooks.netlify.app()
-        .call(event.httpMethod, "/slack-redirect", JSON.parse(event.body))
+        .call(event.httpMethod, "/slack-redirect", body)
         .then((response) => {
             return {
                 statusCode: response.statusCode,

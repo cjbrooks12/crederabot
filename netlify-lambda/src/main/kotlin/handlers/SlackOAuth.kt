@@ -13,6 +13,8 @@ import com.caseyjbrooks.netlify.router.get
 fun Router.slackOAuthFlow() {
 
     get("slack-redirect") { body ->
+        console.log(body.query.code)
+
         val env = app().env
         val url = "https://slack.com/api/oauth.access?" +
                 "code=${body.query.code}" +
