@@ -78,25 +78,30 @@ private suspend fun adjustScore(
     up: Boolean,
     reason: String
 ): Response {
-    val (userName, newTotal) = createOrUpdateRecord(team, fromUser, userId, isUser, up, reason)
-
-    var message = "$userName "
-
-    if(up) {
-        message += "received a point "
+    if(fromUser == userId) {
+        postMessageToSlackNow(channel, "No.")
     }
     else {
-        message += "loses a point "
-    }
+        val (userName, newTotal) = createOrUpdateRecord(team, fromUser, userId, isUser, up, reason)
 
-    if (reason.isBlank()){
-        message += "and is now at $newTotal "
-    }
-    else {
-        message += "for ${reason.trim()} and is now at $newTotal"
-    }
+        var message = "$userName "
 
-    postMessageToSlackNow(channel, message)
+        if(up) {
+            message += "received a point "
+        }
+        else {
+            message += "loses a point "
+        }
+
+        if (reason.isBlank()){
+            message += "and is now at $newTotal "
+        }
+        else {
+            message += "for ${reason.trim()} and is now at $newTotal"
+        }
+
+        postMessageToSlackNow(channel, message)
+    }
 
     return success()
 }

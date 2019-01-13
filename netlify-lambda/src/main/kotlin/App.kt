@@ -12,22 +12,22 @@ class App(routes: Router.()->Unit) {
 
     @JsName("call")
     fun call(method: String, path: String, body: dynamic): Promise<Response> {
-        println("========================= CALLING ROUTE =========================")
-        println("===== path: [$path]")
-        println("====================== REQUEST BODY START =======================")
-        println(JSON.stringify(body, null, 2))
-        println("======================= REQUEST BODY END ========================")
-        println("========================= HANDLE BEGIN ==========================")
+        console.log("========================= CALLING ROUTE =========================")
+        console.log("===== path: [$path]")
+        console.log("====================== REQUEST BODY START =======================")
+        console.log(JSON.stringify(body, null, 2))
+        console.log("======================= REQUEST BODY END ========================")
+        console.log("========================= HANDLE BEGIN ==========================")
         return GlobalScope.async {
             val responseCall = router.call(method, path, body)
 
-            println("========================== HANDLE END ===========================")
-            println("====================== RESPONSE BODY START ======================")
-            println(JSON.stringify(responseCall.body, null, 2))
-            println("======================= RESPONSE BODY END =======================")
-            println("=========================== ROUTE END ===========================")
-            println()
-            println()
+            console.log("========================== HANDLE END ===========================")
+            console.log("====================== RESPONSE BODY START ======================")
+            console.log(JSON.stringify(responseCall.body, null, 2))
+            console.log("======================= RESPONSE BODY END =======================")
+            console.log("=========================== ROUTE END ===========================")
+            console.log()
+            console.log()
 
             responseCall
         }.asPromise()
