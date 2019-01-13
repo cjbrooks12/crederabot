@@ -46,7 +46,7 @@ fun Router.slackMessage(vararg messageStrings: String, callback: suspend (String
 //----------------------------------------------------------------------------------------------------------------------
 
 fun Router.slackMention(messageRegex: Regex, callback: suspend (String, MatchResult?, dynamic) -> Response) {
-    handlers.add(AnonymousSlackMentionHandler("^$USER_MENTION_NO_CAPTURE\\s+?${messageRegex.pattern}".toRegex(), callback))
+    handlers.add(AnonymousSlackMentionHandler("^$USER_MENTION_NO_CAPTURE${messageRegex.pattern}".toRegex(), callback))
 }
 fun Router.slackMention(vararg messageStrings: String, callback: suspend (String, MatchResult?, dynamic) -> Response) {
     for(messageString in messageStrings) {

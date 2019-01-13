@@ -12,15 +12,14 @@ class App(routes: Router.()->Unit) {
 
     @JsName("call")
     fun call(method: String, path: String, body: dynamic): Promise<Response> {
-        console.log("========================= CALLING ROUTE =========================")
-        console.log("===== path: [$path]")
-        console.log("====================== REQUEST BODY START =======================")
-        console.log(JSON.stringify(body, null, 2))
-        console.log("======================= REQUEST BODY END ========================")
-        console.log("========================= HANDLE BEGIN ==========================")
         return GlobalScope.async {
+            console.log("========================= CALLING ROUTE =========================")
+            console.log("===== path: [$path]")
+            console.log("====================== REQUEST BODY START =======================")
+            console.log(JSON.stringify(body, null, 2))
+            console.log("======================= REQUEST BODY END ========================")
+            console.log("========================= HANDLE BEGIN ==========================")
             val responseCall = router.call(method, path, body)
-
             console.log("========================== HANDLE END ===========================")
             console.log("====================== RESPONSE BODY START ======================")
             console.log(JSON.stringify(responseCall.body, null, 2))

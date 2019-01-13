@@ -5,6 +5,7 @@ import com.caseyjbrooks.netlify.Router
 import com.caseyjbrooks.netlify.data.FirebaseDatabaseRef
 import com.caseyjbrooks.netlify.data.THING_MENTION
 import com.caseyjbrooks.netlify.data.USER_MENTION
+import com.caseyjbrooks.netlify.data.asList
 import com.caseyjbrooks.netlify.data.get
 import com.caseyjbrooks.netlify.data.getFirebaseDatabase
 import com.caseyjbrooks.netlify.data.getSlackUsername
@@ -18,27 +19,27 @@ import com.caseyjbrooks.netlify.router.slackMessage
 import com.caseyjbrooks.netlify.success
 
 fun Router.plusPlus() {
-    // main ++ and -- messages
 
+    // main ++ and -- messages
     val PLUS_PLUS_USER_REGEX = "^$USER_MENTION\\+\\+(.*)$".toRegex()
     slackMessage(PLUS_PLUS_USER_REGEX) { _, matchResult, body ->
         val (userId, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, userId, true, true, reason)
+        adjustScore(body.team_id, body.event.channel, body.event.user, userId.trim(), true, true, reason.trim())
     }
     val PLUS_PLUS_THING_REGEX = "^$THING_MENTION\\+\\+(.*)$".toRegex()
     slackMessage(PLUS_PLUS_THING_REGEX) { _, matchResult, body ->
         val (thing, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, thing, false, true, reason)
+        adjustScore(body.team_id, body.event.channel, body.event.user, thing.trim(), false, true, reason.trim())
     }
     val MINUS_MINUS_USER_REGEX = "^$USER_MENTION--(.*)$".toRegex()
     slackMessage(MINUS_MINUS_USER_REGEX) { _, matchResult, body ->
         val (userId, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, userId, true, false, reason)
+        adjustScore(body.team_id, body.event.channel, body.event.user, userId.trim(), true, false, reason.trim())
     }
     val MINUS_MINUS_THING_REGEX = "^$THING_MENTION--(.*)$".toRegex()
     slackMessage(MINUS_MINUS_THING_REGEX) { _, matchResult, body ->
         val (thing, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, thing, false, false, reason)
+        adjustScore(body.team_id, body.event.channel, body.event.user, thing.trim(), false, false, reason.trim())
     }
 
     // show leaderboards, either from the top or the bottom, or for a single user
@@ -61,6 +62,18 @@ fun Router.plusPlus() {
     slackMention(THING_SCORE_REGEX) { _, matchResult, body ->
         val (thing) = matchResult!!.destructured
         showScore(body.team_id, body.event.channel, thing.trim(), false)
+    }
+
+    // show reasons
+    val USER_REASONS_WHY_REGEX = "(\\d*)\\s?reasons why$USER_MENTION$".toRegex()
+    slackMention(USER_REASONS_WHY_REGEX) { _, matchResult, body ->
+        val (count, userId) = matchResult!!.destructured
+        showReasonsWhy(body.team_id, body.event.channel, userId.trim(), true, count.toIntOrNull())
+    }
+    val THING_REASONS_WHY_REGEX = "(\\d+)?\\s?reasons why$THING_MENTION$".toRegex()
+    slackMention(THING_REASONS_WHY_REGEX) { _, matchResult, body ->
+        val (count, thing) = matchResult!!.destructured
+        showReasonsWhy(body.team_id, body.event.channel, thing.trim(), false, count.toIntOrNull())
     }
 
     // get help
@@ -216,6 +229,47 @@ suspend fun showScore(
     return success()
 }
 
+suspend fun showReasonsWhy(
+    teamId: String,
+    channel: String,
+    userId: String,
+    isUser: Boolean,
+    count: Int?
+): Response {
+    val requestedCount = if(count != null)
+        if(count <= 0) 10 else if(count >= 25) 25 else count
+    else
+        10
+
+    val user = getFirebaseDatabase()["crederaPlusPlus"][teamId]["users"][userId]
+
+    val data = user.onceNow()
+
+    var message: String
+    if (data.exists()) {
+        val userData = data.get()
+        message = "${userData.username} has ${userData.score} points, here are some raisins:"
+
+        message += data
+            .child("reasons")
+            .asList(requestedCount, true) { (it.reason as String).isNotEmpty() }
+            .joinToString("") {
+                if((it.delta as Int) > 0) {
+                    "\n> +1 ${it.reason}"
+                }
+                else {
+                    "\n> -1 ${it.reason}"
+                }
+            }
+    } else {
+        message = "${if(isUser) "Who" else "What"} the %#&* is $userId?!"
+    }
+
+    postMessageToSlackNow(channel, message)
+
+    return success()
+}
+
 suspend fun showHelp(
     channel: String
 ): Response {
@@ -226,6 +280,7 @@ suspend fun showHelp(
         |> @plusplus top [count]
         |> @plusplus bottom [count]
         |> @plusplus score of [@user/thing]
+        |> @plusplus [count?] reasons why [@user/thing]
         |> @plusplus halp
     """.trimMargin()
 
