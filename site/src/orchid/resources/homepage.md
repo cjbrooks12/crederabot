@@ -45,6 +45,7 @@ remember their glory or shame.
 - Proudly hosted on [Netlify](https://www.netlify.com/)
 - Slackbot is fully implemented using [Netlify Functions](https://www.netlify.com/features/functions/)
 - Serverless functions are written in [Kotlin/JS](https://kotlinlang.org/docs/reference/js-overview.html)
+- Database built with [Firebase Realtime Database](https://firebase.google.com/docs/database/)
 - Documentation site built with [Orchid](https://orchid.netlify.com/) 
 
 {% endfilter  %}
