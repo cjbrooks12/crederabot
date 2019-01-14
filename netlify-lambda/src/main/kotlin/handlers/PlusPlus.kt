@@ -288,11 +288,11 @@ suspend fun showHelp(
     val message = """
         |> [@user/thing]++
         |> [@user/thing]--
-        |> @plusplus top [count]
-        |> @plusplus bottom [count]
-        |> @plusplus score of [@user/thing]
-        |> @plusplus [count?] reasons why [@user/thing]
-        |> @plusplus halp
+        |> @judge-credd top [count]
+        |> @judge-credd bottom [count]
+        |> @judge-credd score of [@user/thing]
+        |> @judge-credd [count?] reasons why [@user/thing]
+        |> @judge-credd halp/help
     """.trimMargin()
 
     postMessageToSlackNow(secure, channel, message)
