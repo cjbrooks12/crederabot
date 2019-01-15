@@ -6,7 +6,7 @@ const val USERS_MENTION_NO_CAPTURE = "\\s*?<@\\w+>\\s*?"
 const val THING_MENTION = "\\s*?(.+)\\s*?"
 
 const val PLUS_PLUS = "\\+\\+"
-const val MINUS_MINUS = "--"
+const val MINUS_MINUS = "(?:--|—)"
 const val PLUS_EQUAL = "\\+=\\s*?(\\d+)"
 const val MINUS_EQUAL = "-=\\s*?(\\d+)"
 const val REASON = "(.*)"
