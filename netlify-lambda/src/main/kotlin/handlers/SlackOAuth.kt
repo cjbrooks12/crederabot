@@ -2,6 +2,7 @@ package com.caseyjbrooks.netlify.handlers
 
 import com.caseyjbrooks.netlify.Response
 import com.caseyjbrooks.netlify.Router
+import com.caseyjbrooks.netlify.SLACK_WEBHOOK_PATH
 import com.caseyjbrooks.netlify.app
 import com.caseyjbrooks.netlify.data.Fetch
 import com.caseyjbrooks.netlify.data.fetchJsonNow
@@ -12,7 +13,7 @@ import com.caseyjbrooks.netlify.router.get
 
 fun Router.slackOAuthFlow() {
 
-    get("slack-redirect") { body ->
+    get(SLACK_WEBHOOK_PATH) { body ->
         console.log(body.query.code)
 
         val env = app().env
