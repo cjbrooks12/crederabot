@@ -27,18 +27,19 @@ remember their glory or shame.
 | Command                                           | Description                                                                                                      |
 | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | `[@user/thing]++                                ` | Add a point to a tagged user or an arbitrary thing                                                               |
+| `[@user/thing]+= [amount]                       ` | Add many points to a tagged user or an arbitrary thing                                                           |
 | `[@user/thing]--                                ` | Remove a point from a tagged user or an arbitrary thing                                                          |
+| `[@user/thing]-= [amount]                       ` | Remove many points to a tagged user or an arbitrary thing                                                        |
 | `@judge-credd top [count]                       ` | Show a leaderboard of the top _n_ players, with the most points                                                  |
 | `@judge-credd bottom [count]                    ` | Show a leaderboard of the bottom _n_ players, with the fewest or most negative points                            |
 | `@judge-credd score of [@user/thing]            ` | Show the current score for a tagged user or an arbitrary thing                                                   |
 | `@judge-credd [count?] reasons why [@user/thing]` | Show the current score for a tagged user or an arbitrary thing, along with a list of the _n_ most recent reasons |
-| `@judge-credd halp/help                         ` | Show a list of available commands                                                                                |
+| `@judge-credd help/halp                         ` | Show a list of available commands                                                                                |
 
 ### Coming Soon (maybe...)
 
 - Steal points from someone! Take their point and give it to yourself, or to someone else.
-- Things getting too heated? Revoke someone's `++` privileges for 30 seconds and watch them squirm!
-- Sometimes, adding or removing just one point is not enough. `+=` and `-=` commands will let you 
+- Things getting too heated? Revoke someone's `++` privileges for 30 seconds and watch them squirm! 
 
 ### Technologies Used
 

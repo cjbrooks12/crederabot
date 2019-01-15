@@ -20,28 +20,89 @@ import com.caseyjbrooks.netlify.router.slackMention
 import com.caseyjbrooks.netlify.router.slackMessage
 import com.caseyjbrooks.netlify.success
 
+// App handlers
+//----------------------------------------------------------------------------------------------------------------------
+
 fun Router.plusPlus() {
 
     // main ++ and -- messages
     val PLUS_PLUS_USER_REGEX = "^$USER_MENTION\\+\\+(.*)$".toRegex()
     slackMessage(PLUS_PLUS_USER_REGEX) { _, matchResult, body ->
         val (userId, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, userId.trim(), true, true, reason.trim())
+        adjustScore(body.team_id, body.event.channel, body.event.user, userId.trim(), true, true, 1, reason.trim())
     }
     val PLUS_PLUS_THING_REGEX = "^$THING_MENTION\\+\\+(.*)$".toRegex()
     slackMessage(PLUS_PLUS_THING_REGEX) { _, matchResult, body ->
         val (thing, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, thing.trim(), false, true, reason.trim())
+        adjustScore(body.team_id, body.event.channel, body.event.user, thing.trim(), false, true, 1, reason.trim())
     }
     val MINUS_MINUS_USER_REGEX = "^$USER_MENTION--(.*)$".toRegex()
     slackMessage(MINUS_MINUS_USER_REGEX) { _, matchResult, body ->
         val (userId, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, userId.trim(), true, false, reason.trim())
+        adjustScore(body.team_id, body.event.channel, body.event.user, userId.trim(), true, false, 1, reason.trim())
     }
     val MINUS_MINUS_THING_REGEX = "^$THING_MENTION--(.*)$".toRegex()
     slackMessage(MINUS_MINUS_THING_REGEX) { _, matchResult, body ->
         val (thing, reason) = matchResult!!.destructured
-        adjustScore(body.team_id, body.event.channel, body.event.user, thing.trim(), false, false, reason.trim())
+        adjustScore(body.team_id, body.event.channel, body.event.user, thing.trim(), false, false, 1, reason.trim())
+    }
+
+    // += and -= messages
+    val PLUS_EQUAL_USER_REGEX = "^$USER_MENTION\\+=\\s*?(\\d+)\\s+?(.*)$".toRegex()
+    slackMessage(PLUS_EQUAL_USER_REGEX) { _, matchResult, body ->
+        val (userId, amount, reason) = matchResult!!.destructured
+        adjustScore(
+            body.team_id,
+            body.event.channel,
+            body.event.user,
+            userId.trim(),
+            true,
+            true,
+            amount.toInt(),
+            reason.trim()
+        )
+    }
+    val PLUS_EQUAL_THING_REGEX = "^$THING_MENTION\\+=\\s*?(\\d+)\\s+?(.*)\$".toRegex()
+    slackMessage(PLUS_EQUAL_THING_REGEX) { _, matchResult, body ->
+        val (thing, amount, reason) = matchResult!!.destructured
+        adjustScore(
+            body.team_id,
+            body.event.channel,
+            body.event.user,
+            thing.trim(),
+            false,
+            true,
+            amount.toInt(),
+            reason.trim()
+        )
+    }
+    val MINUS_EQUAL_USER_REGEX = "^$USER_MENTION-=\\s*?(\\d+)\\s+?(.*)\$".toRegex()
+    slackMessage(MINUS_EQUAL_USER_REGEX) { _, matchResult, body ->
+        val (userId, amount, reason) = matchResult!!.destructured
+        adjustScore(
+            body.team_id,
+            body.event.channel,
+            body.event.user,
+            userId.trim(),
+            true,
+            false,
+            amount.toInt(),
+            reason.trim()
+        )
+    }
+    val MINUS_EQUAL_THING_REGEX = "^$THING_MENTION-=\\s*?(\\d+)\\s+?(.*)\$".toRegex()
+    slackMessage(MINUS_EQUAL_THING_REGEX) { _, matchResult, body ->
+        val (thing, amount, reason) = matchResult!!.destructured
+        adjustScore(
+            body.team_id,
+            body.event.channel,
+            body.event.user,
+            thing.trim(),
+            false,
+            false,
+            amount.toInt(),
+            reason.trim()
+        )
     }
 
     // show leaderboards, either from the top or the bottom, or for a single user
@@ -84,6 +145,45 @@ fun Router.plusPlus() {
     }
 }
 
+// App text
+//----------------------------------------------------------------------------------------------------------------------
+
+val NO = listOf(
+    "No.",
+    "Nope.",
+    "Absolutely not.",
+    "What are you trying to do, bro?",
+    "_sigh..._"
+)
+val TOO_MANY_POINTS = listOf(
+    "Oh, so you think I'm just made of money, do you?",
+    "You seriously think I'm gonna let you do that?",
+    "This is a dangerous road you're walking down.",
+    "Too rich for my blood.",
+    "I'm gonna make you an offer you can't refuse. No."
+)
+val POINT_INCREASE = listOf(
+    "Congrats!",
+    "Let's be friends.",
+    "Get yourself something nice.",
+    "OK, but don't tell anyone.",
+    "I'll do it, but you owe me one."
+)
+val POINT_DECREASE = listOf(
+    "Wow, seriously?",
+    "Harsh.",
+    "Well fine!",
+    "What did they ever do to you?",
+    "Now that's just rude."
+)
+val REASON_BEGINNINGS = listOf(
+    "for",
+    "because"
+)
+
+// App Implementation
+//----------------------------------------------------------------------------------------------------------------------
+
 private suspend fun adjustScore(
     team: String,
     channel: String,
@@ -91,32 +191,56 @@ private suspend fun adjustScore(
     userId: String,
     isUser: Boolean,
     up: Boolean,
+    amount: Int,
     reason: String
 ): Response {
     val secure = getSlackSecureDataNow(team)
-    if(fromUser == userId) {
-        postMessageToSlackNow(secure, channel, "No.")
-    }
-    else {
-        val (userName, newTotal) = createOrUpdateRecord(secure, team, fromUser, userId, isUser, up, reason)
 
-        var message = "$userName "
+    when {
+        fromUser == userId -> postMessageToSlackNow(secure, channel, NO.random())
+        amount > 10        -> postMessageToSlackNow(secure, channel, TOO_MANY_POINTS.random())
+        else               -> {
+            val (userName, newTotal) = createOrUpdateRecord(secure, team, fromUser, userId, isUser, up, amount, reason)
 
-        if(up) {
-            message += "received a point "
-        }
-        else {
-            message += "loses a point "
-        }
+            var message = ""
 
-        if (reason.isBlank()){
-            message += "and is now at $newTotal "
-        }
-        else {
-            message += "for ${reason.trim()} and is now at $newTotal"
-        }
+            if (up) {
+                message += POINT_INCREASE.random()
+            } else {
+                message += POINT_DECREASE.random()
+            }
 
-        postMessageToSlackNow(secure, channel, message)
+            message += "\n> $userName "
+
+            if (amount == 1) {
+                if (up) {
+                    message += "received a point "
+                } else {
+                    message += "loses a point "
+                }
+            } else {
+                if (up) {
+                    message += "received $amount points "
+                } else {
+                    message += "loses $amount points "
+                }
+            }
+
+            if (reason.isBlank()) {
+                message += "and is now at $newTotal "
+            } else if (reason.isBlank()) {
+                message += "and is now at $newTotal "
+            } else {
+                if(REASON_BEGINNINGS.any { reason.trim().startsWith(it) }) {
+                    message += "${reason.trim()} and is now at $newTotal"
+                }
+                else {
+                    message += "for ${reason.trim()} and is now at $newTotal"
+                }
+            }
+
+            postMessageToSlackNow(secure, channel, message)
+        }
     }
 
     return success()
@@ -129,6 +253,7 @@ suspend fun createOrUpdateRecord(
     userId: String,
     isUser: Boolean,
     up: Boolean,
+    amount: Int,
     reason: String
 ): Pair<String, Int> {
     val user = getFirebaseDatabase()["crederaPlusPlus"][teamId]["users"][userId]
@@ -137,19 +262,18 @@ suspend fun createOrUpdateRecord(
 
     if (data != null) {
         val scoreUpdate: dynamic = object {}
-        scoreUpdate["score"] = data.score + if (up) 1 else -1
+        scoreUpdate["score"] = data.score + if (up) amount else -1 * amount
         user.updateNow(scoreUpdate)
     } else {
         val scoreUpdate: dynamic = object {}
-        scoreUpdate["score"] = if (up) 1 else -1
+        scoreUpdate["score"] = if (up) amount else -1 * amount
         scoreUpdate["isUser"] = isUser
         scoreUpdate["userId"] = userId
 
         // only need to call the Slack API once, and then we can cache it in the db
         if (isUser) {
             scoreUpdate["username"] = getSlackUsername(secure, userId)
-        }
-        else {
+        } else {
             scoreUpdate["username"] = userId
         }
 
@@ -158,7 +282,7 @@ suspend fun createOrUpdateRecord(
 
     // add the reason
     val reasonsUpdate: dynamic = object {}
-    reasonsUpdate["delta"] = if (up) 1 else -1
+    reasonsUpdate["delta"] = if (up) amount else -1 * amount
     reasonsUpdate["reason"] = reason.trim()
     reasonsUpdate["from"] = fromUser
     user.child("reasons").pushNow(reasonsUpdate)
@@ -176,16 +300,15 @@ suspend fun showLeaderboard(
 ): Response {
     val secure = getSlackSecureDataNow(teamId)
 
-    val requestedCount = if(count <= 0) 10 else if(count >= 25) 25 else count
+    val requestedCount = if (count <= 0) 10 else if (count >= 25) 25 else count
 
     var usersRef: FirebaseDatabaseRef = getFirebaseDatabase()["crederaPlusPlus"][teamId]["users"]
 
     usersRef = usersRef.orderByChild("score")
 
-    if(top) {
+    if (top) {
         usersRef = usersRef.limitToLast(requestedCount)
-    }
-    else {
+    } else {
         usersRef = usersRef.limitToFirst(requestedCount)
     }
 
@@ -200,14 +323,13 @@ suspend fun showLeaderboard(
     }
 
     val itemsMessage: String
-    if(top) {
+    if (top) {
         itemsMessage = items.reversed().joinToString("\n")
-    }
-    else {
+    } else {
         itemsMessage = items.joinToString("\n")
     }
 
-    val message = "Here are the ${if(top) "top" else "bottom"} $actualCount:\n$itemsMessage"
+    val message = "Here are the ${if (top) "top" else "bottom"} $actualCount:\n$itemsMessage"
     postMessageToSlackNow(secure, channel, message)
 
     return success()
@@ -228,7 +350,7 @@ suspend fun showScore(
     if (data != null) {
         message = "${data.username} has ${data.score} points"
     } else {
-        message = "${if(isUser) "Who" else "What"} the %#&* is $userId?!"
+        message = "${if (isUser) "Who" else "What"} the %#&* is $userId?!"
     }
 
     postMessageToSlackNow(secure, channel, message)
@@ -245,8 +367,8 @@ suspend fun showReasonsWhy(
 ): Response {
     val secure = getSlackSecureDataNow(teamId)
 
-    val requestedCount = if(count != null)
-        if(count <= 0) 10 else if(count >= 25) 25 else count
+    val requestedCount = if (count != null)
+        if (count <= 0) 10 else if (count >= 25) 25 else count
     else
         10
 
@@ -263,15 +385,14 @@ suspend fun showReasonsWhy(
             .child("reasons")
             .asList(requestedCount, true) { (it.reason as String).isNotEmpty() }
             .joinToString("") {
-                if((it.delta as Int) > 0) {
+                if ((it.delta as Int) > 0) {
                     "\n> +1 ${it.reason}"
-                }
-                else {
+                } else {
                     "\n> -1 ${it.reason}"
                 }
             }
     } else {
-        message = "${if(isUser) "Who" else "What"} the %#&* is $userId?!"
+        message = "${if (isUser) "Who" else "What"} the %#&* is $userId?!"
     }
 
     postMessageToSlackNow(secure, channel, message)
@@ -287,12 +408,14 @@ suspend fun showHelp(
 
     val message = """
         |> [@user/thing]++
+        |> [@user/thing]+= [amount]
         |> [@user/thing]--
+        |> [@user/thing]-= [amount]
         |> @judge-credd top [count]
         |> @judge-credd bottom [count]
         |> @judge-credd score of [@user/thing]
         |> @judge-credd [count?] reasons why [@user/thing]
-        |> @judge-credd halp/help
+        |> @judge-credd help/halp
     """.trimMargin()
 
     postMessageToSlackNow(secure, channel, message)
