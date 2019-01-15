@@ -1,12 +1,13 @@
 ---
+extraCss:
+    - 'inline:homepage.scss:table td code {white-space: nowrap;}'
 ---
 
-
 <div class="row">
-    <div class="6u 12u(small)">
+    <div class="8u 12u(small)">
         {{ leftCol() }}
     </div>
-    <div class="6u 12u(small)">
+    <div class="4u 12u(small) -1">
         {{ rightCol() }}
     </div>
 </div>
@@ -47,7 +48,7 @@ remember their glory or shame.
 - Slackbot is fully implemented using [Netlify Functions](https://www.netlify.com/features/functions/)
 - Serverless functions are written in [Kotlin/JS](https://kotlinlang.org/docs/reference/js-overview.html)
 - Database built with [Firebase Realtime Database](https://firebase.google.com/docs/database/)
-- Documentation site built with [Orchid](https://orchid.netlify.com/) 
+- Homepage and documentation built with [Orchid](https://orchid.netlify.com/)
 
 {% endfilter  %}
 {% endmacro %}
