@@ -9,7 +9,7 @@ import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_TYPE
 import com.caseyjbrooks.netlify.SLACK_URL_VERIFICATION_TYPE
 import com.caseyjbrooks.netlify.SLACK_WEBHOOK_PATH
 import com.caseyjbrooks.netlify.app
-import com.caseyjbrooks.netlify.data.USER_MENTION_NO_CAPTURE
+import com.caseyjbrooks.netlify.apps.slack.USERS_MENTION_NO_CAPTURE
 
 // standard Slack API handlers
 //----------------------------------------------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ fun Router.slackEvent(eventType: String, callback: suspend (dynamic) -> Response
 // Handle generic slack messages
 //----------------------------------------------------------------------------------------------------------------------
 
-fun Router.slackMessage(messageRegex: Regex, callback: suspend (String, MatchResult?, dynamic) -> Response) {
+fun Router.slackMessage(messageRegex: Regex, callback: suspend (String, MatchResult, dynamic) -> Response) {
     handlers.add(AnonymousSlackMessageHandler(messageRegex, callback))
 }
 fun Router.slackMessage(vararg messageStrings: String, callback: suspend (String, MatchResult?, dynamic) -> Response) {
@@ -42,10 +42,10 @@ fun Router.slackMessage(vararg messageStrings: String, callback: suspend (String
 // Handle messages mentioned at the bot user
 //----------------------------------------------------------------------------------------------------------------------
 
-fun Router.slackMention(messageRegex: Regex, callback: suspend (String, MatchResult?, dynamic) -> Response) {
-    handlers.add(AnonymousSlackMentionHandler("^$USER_MENTION_NO_CAPTURE${messageRegex.pattern}".toRegex(), callback))
+fun Router.slackMention(messageRegex: Regex, callback: suspend (String, MatchResult, dynamic) -> Response) {
+    handlers.add(AnonymousSlackMentionHandler("^$USERS_MENTION_NO_CAPTURE${messageRegex.pattern}".toRegex(), callback))
 }
-fun Router.slackMention(vararg messageStrings: String, callback: suspend (String, MatchResult?, dynamic) -> Response) {
+fun Router.slackMention(vararg messageStrings: String, callback: suspend (String, MatchResult, dynamic) -> Response) {
     for(messageString in messageStrings) {
         slackMention(messageString.toRegex(), callback)
     }
@@ -86,7 +86,7 @@ open class AnonymousSlackEventHandler(
 
 class AnonymousSlackMessageHandler(
     private val messageRegex: Regex,
-    val callback: suspend (String, MatchResult?, dynamic) -> Response
+    val callback: suspend (String, MatchResult, dynamic) -> Response
 ) : FunctionHandler("POST", SLACK_WEBHOOK_PATH) {
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
@@ -97,13 +97,13 @@ class AnonymousSlackMessageHandler(
     }
 
     override suspend fun handle(body: dynamic): Response = verify(body) {
-        callback.invoke(body.event.text, messageRegex.matchEntire(body.event.text), body)
+        callback.invoke(body.event.text, messageRegex.matchEntire(body.event.text)!!, body)
     }
 }
 
 class AnonymousSlackMentionHandler(
     private val messageRegex: Regex,
-    val callback: suspend (String, MatchResult?, dynamic) -> Response
+    val callback: suspend (String, MatchResult, dynamic) -> Response
 ) : FunctionHandler("POST", SLACK_WEBHOOK_PATH) {
 
     override fun matches(method: String, path: String, body: dynamic): Boolean {
@@ -114,7 +114,7 @@ class AnonymousSlackMentionHandler(
     }
 
     override suspend fun handle(body: dynamic): Response = verify(body) {
-        callback.invoke(body.event.text, messageRegex.matchEntire(body.event.text), body)
+        callback.invoke(body.event.text, messageRegex.matchEntire(body.event.text)!!, body)
     }
 }
 

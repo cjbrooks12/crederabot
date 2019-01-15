@@ -1,6 +1,6 @@
 package com.caseyjbrooks.netlify
 
-import com.caseyjbrooks.netlify.handlers.plusPlus
+import com.caseyjbrooks.netlify.apps.slack.plusPlus
 import com.caseyjbrooks.netlify.handlers.slackOAuthFlow
 import com.caseyjbrooks.netlify.router.get
 import com.caseyjbrooks.netlify.router.slackMessageDefault

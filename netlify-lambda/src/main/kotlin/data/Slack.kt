@@ -1,11 +1,6 @@
 package com.caseyjbrooks.netlify.data
 
 import kotlinx.coroutines.await
-import kotlin.js.Promise
-
-const val USER_MENTION = "\\s*?<@(\\w+)>\\s*?"
-const val USER_MENTION_NO_CAPTURE = "\\s*?<@\\w+>\\s*?"
-const val THING_MENTION = "\\s*?(.+)\\s*?"
 
 data class SlackSecureData(
     val appToken: String,
@@ -14,7 +9,7 @@ data class SlackSecureData(
     val authorizedBy: String
 )
 
-fun getSlackSecureData(teamId: String): Promise<SlackSecureData> {
+suspend fun getSlackSecureData(teamId: String): SlackSecureData {
     return getFirebaseDatabase()["crederaPlusPlus"][teamId]["secure"].once().then {
         val secure = it.get()
         SlackSecureData(
@@ -23,24 +18,10 @@ fun getSlackSecureData(teamId: String): Promise<SlackSecureData> {
             botId = secure.botUserId,
             authorizedBy = secure.authorizedBy
         )
-    }
-}
-suspend fun getSlackSecureDataNow(teamId: String): SlackSecureData = getSlackSecureData(teamId).await()
-
-fun getSlackUserInfo(secure: SlackSecureData, userId: String): Promise<dynamic> {
-    val options: dynamic = object{}
-    options["method"] = "GET"
-    options["headers"] = object{}
-    options["headers"]["Authorization"] = "Bearer ${secure.appToken}"
-
-    return Fetch.fetchJson("https://slack.com/api/users.profile.get?user=$userId", options)
+    }.await()
 }
 
-suspend fun getSlackUsername(secure: SlackSecureData, userId: String): String {
-    return getSlackUserInfo(secure, userId).then { response: dynamic -> response.profile.real_name_normalized.toString() }.await()
-}
-
-fun postMessageToSlack(secure: SlackSecureData, channel: String, message: String, attachments: List<String> = emptyList()): Promise<dynamic> {
+suspend fun postMessageToSlack(secure: SlackSecureData, channel: String, message: String, attachments: List<String> = emptyList()): dynamic {
     val options: dynamic = object{}
     options["method"] = "POST"
 
@@ -64,6 +45,5 @@ fun postMessageToSlack(secure: SlackSecureData, channel: String, message: String
     }
 
     options["body"] = JSON.stringify(options["body"])
-    return Fetch.fetchJson("https://slack.com/api/chat.postMessage", options)
+    return Fetch.fetchJson("https://slack.com/api/chat.postMessage", options).await()
 }
-suspend fun postMessageToSlackNow(secure: SlackSecureData, channel: String, message: String) = postMessageToSlack(secure, channel, message).await()
