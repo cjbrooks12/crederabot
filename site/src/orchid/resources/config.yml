@@ -13,6 +13,10 @@ theme:
       url: 'https://slack.com/oauth/authorize?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
     - type: 'page'
       itemId: 'API Reference'
+    - type: 'page'
+      itemId: 'Contact Us'
+    - type: 'page'
+      itemId: 'Privacy Policy'
 
     - type: 'separator'
       title: 'About Credera'
