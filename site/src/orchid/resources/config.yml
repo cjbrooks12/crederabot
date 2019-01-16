@@ -10,9 +10,18 @@ theme:
       url: '/'
     - type: 'link'
       title: 'Add To Slack'
-      url: 'https://slack.com/oauth/authorize?client_id=402674575044.402789997363&scope=channels:history,users.profile:read,chat:write:bot,bot'
+      url: 'https://slack.com/oauth/authorize?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
     - type: 'page'
       itemId: 'API Reference'
+
+    - type: 'separator'
+      title: 'About Credera'
+    - type: 'link'
+      title: 'Learn More'
+      url: 'https://www.credera.com/'
+    - type: 'link'
+      title: 'Contact Us'
+      url: 'https://www.credera.com/contact/'
 
 services:
   compilers:

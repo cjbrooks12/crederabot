@@ -29,6 +29,7 @@ dependencies {
     orchidCompile "io.github.javaeden.orchid:OrchidEditorial:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidSearch:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidSwagger:${orchid_version}"
+    orchidCompile "io.github.javaeden.orchid:OrchidPluginDocs:${orchid_version}"
     orchidCompile project
 }
 

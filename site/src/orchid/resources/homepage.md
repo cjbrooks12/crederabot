@@ -11,6 +11,11 @@ extraCss:
         {{ rightCol() }}
     </div>
 </div>
+<div class="row">
+    <div class="8u -2u 12u(small)" style="text-align: center" >
+        {{ pageFooter() }}
+    </div>
+</div>
 
 {% macro leftCol() %}
 {% filter compileAs('md') %}
@@ -21,7 +26,7 @@ Credera++ is a simple slackbot to rate your friends! Simply `++` or `--` them in
 Credera++ also keeps track of the reasons why someone was given points or had them taken away, for you to forever 
 remember their glory or shame.
 
-<a href="https://slack.com/oauth/authorize?client_id=402674575044.402789997363&scope=channels:history,users.profile:read,chat:write:bot,bot"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
+<a href="https://slack.com/oauth/authorize?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot"><img alt="Add to Slack" height="40" width="139" src="https://platform.slack-edge.com/img/add_to_slack.png" srcset="https://platform.slack-edge.com/img/add_to_slack.png 1x, https://platform.slack-edge.com/img/add_to_slack@2x.png 2x" /></a>
 
 ### Command Reference
 
@@ -59,6 +64,24 @@ remember their glory or shame.
 # Example Conversation
 
 ![Example conversation]({{ 'assets/example-conversation.png'|asset }} "Example conversation")
+
+{% endfilter  %}
+{% endmacro %}
+
+{% macro pageFooter() %}
+{% filter compileAs('md') %}
+
+---
+
+## Credera is a full-service management and IT consulting firm with offices in Dallas, Houston, and Denver.
+   
+Our clients range from Fortune 500 companies to emerging industry leaders. Our deep capabilities in strategy, 
+organization, process, analytics, user experience, and technology help our clients improve their performance. We provide
+expert, objective advice to help solve complex business and technology challenges.
+
+[Get in touch with us today!](https://www.credera.com/contact/)
+{.button}
+
 
 {% endfilter  %}
 {% endmacro %}
