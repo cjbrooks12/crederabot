@@ -10,4 +10,5 @@ components:
   - type: swaggerUi
     openApiSource: '#{$0|baseUrlRoot}/netlify/openApi.json'
     swaggerUiBaseUrl: '#{$0|baseUrlRoot}/assets'
+  - type: pageContent
 ---

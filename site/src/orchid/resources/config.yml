@@ -10,7 +10,7 @@ theme:
       url: '/'
     - type: 'link'
       title: 'Add To Slack'
-      url: 'https://slack.com/oauth/authorize?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
+      url: 'https://slack.com/oauth/authorize/?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
     - type: 'page'
       itemId: 'API Reference'
     - type: 'page'

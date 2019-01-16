@@ -11,11 +11,6 @@ extraCss:
         {{ rightCol() }}
     </div>
 </div>
-<div class="row">
-    <div class="8u -2u 12u(small)" style="text-align: center" >
-        {{ pageFooter() }}
-    </div>
-</div>
 
 {% macro leftCol() %}
 {% filter compileAs('md') %}
@@ -64,24 +59,6 @@ remember their glory or shame.
 # Example Conversation
 
 ![Example conversation]({{ 'assets/example-conversation.png'|asset }} "Example conversation")
-
-{% endfilter  %}
-{% endmacro %}
-
-{% macro pageFooter() %}
-{% filter compileAs('md') %}
-
----
-
-## Credera is a full-service management and IT consulting firm with offices in Dallas, Houston, and Denver.
-   
-Our clients range from Fortune 500 companies to emerging industry leaders. Our deep capabilities in strategy, 
-organization, process, analytics, user experience, and technology help our clients improve their performance. We provide
-expert, objective advice to help solve complex business and technology challenges.
-
-[Get in touch with us today!](https://www.credera.com/contact/)
-{.button}
-
 
 {% endfilter  %}
 {% endmacro %}
