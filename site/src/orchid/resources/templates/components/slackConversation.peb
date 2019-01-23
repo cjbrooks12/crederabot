@@ -1,0 +1,41 @@
+<div data-shadowed="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css;https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css;{{ 'assets/slack.scss'|asset }}">
+  <div class="channel-body">
+    <div class="wrapper" style="display: none">
+      <div class="animated slideInLeft main-container">
+        <div class="sidebar"></div>
+        <div class="channel-header"></div>
+        <div class="channel-messages">
+        {% for message in component.messages|reverse %}
+          {{ slackMessage(message.user, message) }}
+        {% endfor %}
+        </div>
+        <div class="channel-footer">
+          {{ slackFooter() }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% macro slackFooter() %}
+<div class="input-wrapper">
+  <input class="input-button" type="submit" value="+">
+  <input class="input-field" placeholder="Message #crederabot" type="text">
+</div>
+{% endmacro %}
+
+{% macro slackMessage(user, message) %}
+<div class="message">
+  <div class="user-info">
+    {% if user.iconIsExternal() %}
+      <img class="person-img-one" src="{{ user.icon }}" alt="{{ user.name }}">
+    {% else %}
+      <img class="person-img-one" src="{{ user.icon|asset|resize(100, 100, "tc") }}" alt="{{ user.name }}">
+    {% endif %}
+  </div>
+  <div class="message-info">
+    <div class="person-name">{{ user.name }} <span class="time">{{ message.time }}</span></div>
+    <div class="person-text">{{ message.text|compileAs('md')|raw }}</div>
+  </div>
+</div>
+{% endmacro %}

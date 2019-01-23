@@ -1,0 +1,138 @@
+.channel-body {
+  padding-top: 50px;
+  padding-bottom: 150px;
+  background: linear-gradient(
+                  rgba(99, 74, 96, 0.9),
+                  rgba(84, 63, 82, 0.9)
+  );
+}
+
+.channel-body .wrapper {
+  display: block !important;
+}
+
+.main-container {
+  position: relative;
+  width: 800px;
+  margin: auto;
+  background: white;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 200px 200px 200px 200px;
+  grid-template-rows: 50px 350px 50px;
+
+  .sidebar {
+    background: #4D394B;
+    grid-column-start: 1;
+    grid-column-end: 1;
+    grid-row-start: 1;
+    grid-row-end: 4;
+  }
+
+  .channel-header {
+    background: #eee;
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 1;
+    grid-row-end: 1;
+  }
+
+  .channel-messages {
+    background: #fff;
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 2;
+    grid-row-end: 2;
+    overflow-x: scroll;
+    padding: 0 20px;
+
+    display: flex;
+    flex-direction: column-reverse;
+
+    .message {
+      position: relative;
+      margin-bottom: 10px;
+
+      .user-info {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+        padding-top: 4px;
+
+        img {
+          width: 60px;
+          height: 60px;
+          border-radius: 5px;
+        }
+      }
+
+      .message-info {
+        position: relative;
+        display: inline-block;
+        vertical-align: top;
+
+        padding-left: 20px;
+        width: calc(100% - 100px);
+
+        .person-name {
+          font-size: 14px;
+          font-weight: bold;
+
+          .time {
+            font-size: 14px;
+            font-weight: lighter;
+          }
+        }
+
+        .person-text {
+
+        }
+      }
+    }
+  }
+
+  .channel-footer {
+    background: #fff;
+    grid-column-start: 2;
+    grid-column-end: 5;
+    grid-row-start: 3;
+    grid-row-end: 3;
+
+    .input-wrapper {
+      width: 100%;
+      display: block;
+      height: 50px;
+      box-sizing: border-box;
+      padding: 5px 0 5px 5px;
+
+      .input-button {
+        width: 40px;
+        height: 40px;
+        background: white;
+        border: thin solid #ddd;
+        display: inline-block;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        margin: 0;
+      }
+
+      .input-field {
+        width: calc(100% - 50px);
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        display: inline-block;
+        background: white;
+        border: thin solid #ddd;
+        height: 40px;
+        padding-left: 20px;
+        padding-right: 20px;
+        box-sizing: border-box;
+        margin: 0 0 0 -4px;
+      }
+    }
+  }
+}
