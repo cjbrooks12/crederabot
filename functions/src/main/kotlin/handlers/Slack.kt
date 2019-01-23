@@ -25,7 +25,7 @@ fun Router.slackSetup() {
         val messageId = req.body?.event?.client_msg_id
 
         if(teamId != null && messageId != null) {
-            val fullMessageId = "type=${req.body?.event?.type},subtype=${req.body?.event?.subtype}::$messageId"
+            val fullMessageId = "type=${req.body?.event?.type?.toString() ?: ""},subtype=${req.body?.event?.subtype?.toString() ?: ""}::$messageId"
             val shouldContinue = checkDebounceSlackMessage(teamId, fullMessageId)
             if(shouldContinue) {
                 Pair(req, null)
@@ -46,7 +46,7 @@ fun Router.slackSetup() {
         val messageId = req.body?.event?.client_msg_id
 
         if(teamId != null && messageId != null) {
-            val fullMessageId = "type=${req.body?.event?.type},subtype=${req.body?.event?.subtype}::$messageId"
+            val fullMessageId = "type=${req.body?.event?.type?.toString() ?: ""},subtype=${req.body?.event?.subtype?.toString() ?: ""}::$messageId"
             logSlackMessageHandled(teamId, fullMessageId)
         }
 
