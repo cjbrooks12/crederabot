@@ -1,11 +1,11 @@
 package com.caseyjbrooks.netlify.router
 
-import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_APP_MENTION_TYPE
-import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_MESSAGE_TYPE
-import com.caseyjbrooks.netlify.SLACK_EVENT_CALLBACK_TYPE
-import com.caseyjbrooks.netlify.SLACK_WEBHOOK_PATH
 import com.caseyjbrooks.netlify.app
 import com.caseyjbrooks.netlify.apps.slack.USERS_MENTION_NO_CAPTURE
+import com.caseyjbrooks.netlify.data.SLACK_EVENT_CALLBACK_APP_MENTION_TYPE
+import com.caseyjbrooks.netlify.data.SLACK_EVENT_CALLBACK_MESSAGE_TYPE
+import com.caseyjbrooks.netlify.data.SLACK_EVENT_CALLBACK_TYPE
+import com.caseyjbrooks.netlify.data.SLACK_WEBHOOK_PATH
 
 // standard Slack API handlers
 //----------------------------------------------------------------------------------------------------------------------
@@ -23,21 +23,11 @@ fun Router.slackMessageDefault() {
     })
 }
 
-fun Router.slackEvent(eventType: String, callback: suspend (dynamic) -> Response) {
-    handlers.add(AnonymousSlackEventHandler(eventType, callback))
-}
-
 // Handle generic slack messages
 //----------------------------------------------------------------------------------------------------------------------
 
 fun Router.slackMessage(messageRegex: Regex, callback: suspend (String, MatchResult, dynamic) -> Response) {
     handlers.add(AnonymousSlackMessageHandler(messageRegex, callback))
-}
-
-fun Router.slackMessage(vararg messageStrings: String, callback: suspend (String, MatchResult?, dynamic) -> Response) {
-    for (messageString in messageStrings) {
-        slackMessage(messageString.toRegex(), callback)
-    }
 }
 
 // Handle messages mentioned at the bot user
@@ -73,25 +63,6 @@ open class AnonymousSlackWebhookHandler(
 
     override fun getPaths() = emptyList<Pair<String, String>>()
 
-}
-
-open class AnonymousSlackEventHandler(
-    private val eventType: String,
-    val callback: suspend (dynamic) -> Response
-) : ApiHandler {
-
-    override suspend fun matches(request: Request): Boolean {
-        return request.method == "POST"
-                && request.path == SLACK_WEBHOOK_PATH
-                && request.body.type == SLACK_EVENT_CALLBACK_TYPE
-                && request.body.event.type == eventType
-    }
-
-    override suspend fun call(request: Request): Response = verify(request) {
-        callback(request.body)
-    }
-
-    override fun getPaths() = emptyList<Pair<String, String>>()
 }
 
 class AnonymousSlackMessageHandler(

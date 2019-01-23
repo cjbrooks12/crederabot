@@ -5,6 +5,14 @@ import com.caseyjbrooks.netlify.log
 import com.caseyjbrooks.netlify.obj
 import kotlinx.coroutines.await
 
+const val SLACK_WEBHOOK_PATH = "slack"
+
+const val SLACK_URL_VERIFICATION_TYPE = "url_verification"
+
+const val SLACK_EVENT_CALLBACK_TYPE = "event_callback"
+const val SLACK_EVENT_CALLBACK_MESSAGE_TYPE = "message"
+const val SLACK_EVENT_CALLBACK_APP_MENTION_TYPE = "app_mention"
+
 data class SlackSecureData(
     val appToken: String,
     val botToken: String,
@@ -24,18 +32,20 @@ suspend fun getSlackSecureData(teamId: String): SlackSecureData {
     }.await()
 }
 
-suspend fun debounceSlackMessage(teamId: String, messageId: String): Boolean {
+suspend fun checkDebounceSlackMessage(teamId: String, messageId: String): Boolean {
+    val messageIdsRef = getFirebaseDatabase()["crederaPlusPlus"][teamId]["messages"][messageId]
+    val data = messageIdsRef.onceNow().get()
+    return (data == null)
+}
+
+suspend fun logSlackMessageHandled(teamId: String, messageId: String) {
     val messageIdsRef = getFirebaseDatabase()["crederaPlusPlus"][teamId]["messages"][messageId]
 
     val data = messageIdsRef.onceNow().get()
 
-    return if (data == null) {
-        // we have not gotten this message before
+    if (data == null) {
+        // we have not gotten this message before, log it so we don't handle it again
         messageIdsRef.setNow(messageId)
-        true
-    } else {
-        // we have already gotten this message before
-        false
     }
 }
 
