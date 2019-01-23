@@ -14,4 +14,7 @@ class EnvVar {
     val slackBotUsername: String = _env.SLACK_BOT_USERNAME
     val slackBotIcon: String = _env.SLACK_BOT_ICON
 
+    val logRequests: Boolean = _env.LOG_REQUESTS?.toString()?.toBoolean() ?: false
+    val runTests: Boolean = _env.RUN_TESTS?.toString()?.toBoolean() ?: false
+
 }
