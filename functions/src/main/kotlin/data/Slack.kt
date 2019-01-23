@@ -1,6 +1,7 @@
 package com.caseyjbrooks.netlify.data
 
 import com.caseyjbrooks.netlify.app
+import com.caseyjbrooks.netlify.log
 import com.caseyjbrooks.netlify.obj
 import kotlinx.coroutines.await
 
@@ -39,6 +40,7 @@ suspend fun debounceSlackMessage(teamId: String, messageId: String): Boolean {
 }
 
 suspend fun postMessageToSlack(secure: SlackSecureData, channelId: String, message: String, attachmentMessages: List<String> = emptyList()): dynamic {
+    log("posting message to slack")
     val options = obj {
         method = "POST"
         headers = obj {

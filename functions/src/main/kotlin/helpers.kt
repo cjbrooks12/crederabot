@@ -22,3 +22,7 @@ fun String.asResponse(statusCode: Int = 200): Response {
 inline fun obj(block: dynamic.() -> Unit): dynamic {
     return object{}.apply<dynamic>(block)
 }
+
+fun log(message: String) {
+    if(app().env.logRequests) console.log(message)
+}
