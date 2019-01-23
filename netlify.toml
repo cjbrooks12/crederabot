@@ -9,4 +9,4 @@
   base    = ""
   Command = "./gradlew npmInstall build -Penv=prod"
   Publish = "site/build/docs/orchid"
-  Functions = "netlify-lambda/build/netlify/functions"
+  Functions = "functions/build/netlify/functions"
