@@ -4,48 +4,54 @@ import com.caseyjbrooks.netlify.app
 import com.caseyjbrooks.netlify.data.Fetch
 import com.caseyjbrooks.netlify.data.SLACK_URL_VERIFICATION_TYPE
 import com.caseyjbrooks.netlify.data.SLACK_WEBHOOK_PATH
+import com.caseyjbrooks.netlify.data.checkDebounceSlackMessage
 import com.caseyjbrooks.netlify.data.fetchJsonNow
 import com.caseyjbrooks.netlify.data.get
 import com.caseyjbrooks.netlify.data.getFirebaseDatabase
+import com.caseyjbrooks.netlify.data.logSlackMessageHandled
 import com.caseyjbrooks.netlify.data.setNow
 import com.caseyjbrooks.netlify.router.Response
 import com.caseyjbrooks.netlify.router.Router
+import com.caseyjbrooks.netlify.router.after
+import com.caseyjbrooks.netlify.router.before
 import com.caseyjbrooks.netlify.router.get
 import com.caseyjbrooks.netlify.router.slack
 
 fun Router.slackSetup() {
 
-//    // debounce message requests
-//    before { req ->
-//        val teamId = req.body?.team_id
-//        val messageId = req.body?.event?.client_msg_id
-//
-//        if(teamId != null && messageId != null) {
-//            val shouldContinue = checkDebounceSlackMessage(teamId, messageId)
-//            if(shouldContinue) {
-//                Pair(req, null)
-//            }
-//            else {
-//                Pair(null, Response(200, "Already been handled :)"))
-//            }
-//        }
-//        else {
-//            // we don't even have a Slack message here
-//            Pair(req, null)
-//        }
-//    }
-//
-//    // debounce message requests
-//    after { req, resp ->
-//        val teamId = req.body?.team_id
-//        val messageId = req.body?.event?.client_msg_id
-//
-//        if(teamId != null && messageId != null) {
-//            logSlackMessageHandled(teamId, messageId)
-//        }
-//
-//        resp
-//    }
+    // debounce message requests
+    before { req ->
+        val teamId = req.body?.team_id
+        val messageId = req.body?.event?.client_msg_id
+
+        if(teamId != null && messageId != null) {
+            val fullMessageId = "type=${req.body?.event?.type},subtype=${req.body?.event?.subtype}::$messageId"
+            val shouldContinue = checkDebounceSlackMessage(teamId, fullMessageId)
+            if(shouldContinue) {
+                Pair(req, null)
+            }
+            else {
+                Pair(null, Response(200, "Already been handled :)"))
+            }
+        }
+        else {
+            // we don't even have a Slack message here
+            Pair(req, null)
+        }
+    }
+
+    // debounce message requests
+    after { req, resp ->
+        val teamId = req.body?.team_id
+        val messageId = req.body?.event?.client_msg_id
+
+        if(teamId != null && messageId != null) {
+            val fullMessageId = "type=${req.body?.event?.type},subtype=${req.body?.event?.subtype}::$messageId"
+            logSlackMessageHandled(teamId, fullMessageId)
+        }
+
+        resp
+    }
 
     // handle Slack URL verification
     slack(SLACK_URL_VERIFICATION_TYPE) { body -> Response(200, body.challenge) }
