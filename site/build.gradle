@@ -8,7 +8,7 @@ plugins {
 // Kotlin Setup
 //----------------------------------------------------------------------------------------------------------------------
 sourceCompatibility = JavaVersion.VERSION_1_8
-compileKotlin {
+compileOrchidKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 
@@ -21,17 +21,14 @@ repositories {
 dependencies {
     def orchid_version = '0.15.3'
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-
-    compile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
     orchidCompile "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidPages:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidEditorial:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidSearch:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidSwagger:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidPluginDocs:${orchid_version}"
-    orchidCompile "io.github.javaeden.orchid:OrchidForms:${orchid_version}"
-    orchidCompile project
+    orchidRuntime "io.github.javaeden.orchid:OrchidCore:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidPages:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidEditorial:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidSearch:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidSwagger:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidPluginDocs:${orchid_version}"
+    orchidRuntime "io.github.javaeden.orchid:OrchidForms:${orchid_version}"
 }
 
 project.version = '1'

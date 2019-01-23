@@ -7,7 +7,7 @@ pluginManagement {
         }
     }
 }
-rootProject.name = 'OrchidNetlifySlackbot'
+rootProject.name = 'crederabot'
 
 include ':site'
-include ':netlify-lambda'
+include ':functions'

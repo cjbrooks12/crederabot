@@ -15,6 +15,9 @@ extraCss:
 {% macro leftCol() %}
 {% filter compileAs('md') %}
 
+![Geoffrey]({{'assets/geoffrey.jpg'|asset}} "Geoffrey")
+> Meet Geoffrey, your new best friend.
+
 # About and Usage
 
 Credera++ is a simple slackbot to rate your friends! Simply `++` or `--` them in Slack and let Credd be the Judge. 
