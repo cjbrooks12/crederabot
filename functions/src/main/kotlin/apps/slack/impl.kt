@@ -1,5 +1,6 @@
 package com.caseyjbrooks.netlify.apps.slack
 
+import com.caseyjbrooks.netlify.app
 import com.caseyjbrooks.netlify.data.FirebaseDatabaseRef
 import com.caseyjbrooks.netlify.data.asList
 import com.caseyjbrooks.netlify.data.get
@@ -239,11 +240,11 @@ suspend fun showHelp(
         |> [@user/thing]+= [amount]
         |> [@user/thing]--
         |> [@user/thing]-= [amount]
-        |> @judge-credd top [count]
-        |> @judge-credd bottom [count]
-        |> @judge-credd score of [@user/thing]
-        |> @judge-credd [count?] reasons why [@user/thing]
-        |> @judge-credd help/halp
+        |> @${app().env.slackBotUsername} top [count]
+        |> @${app().env.slackBotUsername} bottom [count]
+        |> @${app().env.slackBotUsername} score of [@user/thing]
+        |> @${app().env.slackBotUsername} [count?] reasons why [@user/thing]
+        |> @${app().env.slackBotUsername} help
     """.trimMargin()
 
     postMessageToSlack(secure, channel, message)

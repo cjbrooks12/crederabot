@@ -23,7 +23,7 @@ suspend fun getSlackSecureData(teamId: String): SlackSecureData {
     }.await()
 }
 
-suspend fun debounceSlackMessage(secure: SlackSecureData, teamId: String, messageId: String): Boolean {
+suspend fun debounceSlackMessage(teamId: String, messageId: String): Boolean {
     val messageIdsRef = getFirebaseDatabase()["crederaPlusPlus"][teamId]["messages"][messageId]
 
     val data = messageIdsRef.onceNow().get()

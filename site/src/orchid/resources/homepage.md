@@ -34,11 +34,11 @@ remember their glory or shame.
 | `[@user/thing]+= [amount]                       ` | Add many points to a tagged user or an arbitrary thing                                                           |
 | `[@user/thing]--                                ` | Remove a point from a tagged user or an arbitrary thing                                                          |
 | `[@user/thing]-= [amount]                       ` | Remove many points to a tagged user or an arbitrary thing                                                        |
-| `@judge-credd top [count]                       ` | Show a leaderboard of the top _n_ players, with the most points                                                  |
-| `@judge-credd bottom [count]                    ` | Show a leaderboard of the bottom _n_ players, with the fewest or most negative points                            |
-| `@judge-credd score of [@user/thing]            ` | Show the current score for a tagged user or an arbitrary thing                                                   |
-| `@judge-credd [count?] reasons why [@user/thing]` | Show the current score for a tagged user or an arbitrary thing, along with a list of the _n_ most recent reasons |
-| `@judge-credd help/halp                         ` | Show a list of available commands                                                                                |
+| `@Geoffrey top [count]                          ` | Show a leaderboard of the top _n_ players, with the most points                                                  |
+| `@Geoffrey bottom [count]                       ` | Show a leaderboard of the bottom _n_ players, with the fewest or most negative points                            |
+| `@Geoffrey score of [@user/thing]               ` | Show the current score for a tagged user or an arbitrary thing                                                   |
+| `@Geoffrey [count?] reasons why [@user/thing]   ` | Show the current score for a tagged user or an arbitrary thing, along with a list of the _n_ most recent reasons |
+| `@Geoffrey help                                 ` | Show a list of available commands                                                                                |
 
 ### Coming Soon (maybe...)
 

@@ -8,7 +8,6 @@ import com.caseyjbrooks.netlify.data.debounceSlackMessage
 import com.caseyjbrooks.netlify.data.fetchJsonNow
 import com.caseyjbrooks.netlify.data.get
 import com.caseyjbrooks.netlify.data.getFirebaseDatabase
-import com.caseyjbrooks.netlify.data.getSlackSecureData
 import com.caseyjbrooks.netlify.data.setNow
 import com.caseyjbrooks.netlify.router.Response
 import com.caseyjbrooks.netlify.router.Router
@@ -25,8 +24,7 @@ fun Router.slackSetup() {
         val messageId = req.body?.event?.client_msg_id
 
         if(teamId != null && channelId != null && messageId != null) {
-            val secureData = getSlackSecureData(teamId)
-            val shouldContinue = debounceSlackMessage(secureData, teamId, messageId)
+            val shouldContinue = debounceSlackMessage(teamId, messageId)
             if(shouldContinue) {
                 Pair(req, null)
             }

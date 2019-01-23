@@ -16,8 +16,8 @@ fun Router.init() {
     }
 
     // middleware
-    if(app().env.logRequests) logging()
-    if(app().env.runTests) testing()
+    logging()
+    testing()
 
     // slack setup
     slackSetup()
