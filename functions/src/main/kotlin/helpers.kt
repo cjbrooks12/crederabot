@@ -23,6 +23,6 @@ inline fun obj(block: dynamic.() -> Unit): dynamic {
     return object{}.apply<dynamic>(block)
 }
 
-fun log(message: String) {
-    if(app().env.logRequests) console.log(message)
+fun v(message: String) {
+    console.log(message)
 }

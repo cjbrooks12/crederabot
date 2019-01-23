@@ -1,8 +1,8 @@
 package com.caseyjbrooks.netlify.data
 
 import com.caseyjbrooks.netlify.app
-import com.caseyjbrooks.netlify.log
 import com.caseyjbrooks.netlify.obj
+import com.caseyjbrooks.netlify.v
 import kotlinx.coroutines.await
 
 const val SLACK_WEBHOOK_PATH = "slack"
@@ -44,13 +44,13 @@ suspend fun logSlackMessageHandled(teamId: String, messageId: String) {
     val data = messageIdsRef.onceNow().get()
 
     if (data == null) {
-        // we have not gotten this message before, log it so we don't handle it again
-        messageIdsRef.setNow(messageId)
+        // we have not gotten this message before, v it so we don't handle it again
+        messageIdsRef.setNow(true)
     }
 }
 
 suspend fun postMessageToSlack(secure: SlackSecureData, channelId: String, message: String, attachmentMessages: List<String> = emptyList()): dynamic {
-    log("posting message to slack")
+    v("posting message to slack")
     val options = obj {
         method = "POST"
         headers = obj {

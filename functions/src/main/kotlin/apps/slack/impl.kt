@@ -11,9 +11,9 @@ import com.caseyjbrooks.netlify.data.postMessageToSlack
 import com.caseyjbrooks.netlify.data.pushNow
 import com.caseyjbrooks.netlify.data.setNow
 import com.caseyjbrooks.netlify.data.updateNow
-import com.caseyjbrooks.netlify.log
 import com.caseyjbrooks.netlify.router.Response
 import com.caseyjbrooks.netlify.success
+import com.caseyjbrooks.netlify.v
 
 suspend fun adjustScore(
     team: String,
@@ -25,7 +25,7 @@ suspend fun adjustScore(
     amount: Int,
     reason: String
 ): Response {
-    log("adjusting score")
+    v("adjusting score")
     val secure = getSlackSecureData(team)
 
     when {
@@ -87,7 +87,7 @@ suspend fun createOrUpdateRecord(
     amount: Int,
     reason: String
 ): Pair<String, Int> {
-    log("creating or updating record")
+    v("creating or updating record")
     val user = getFirebaseDatabase()["crederaPlusPlus"][teamId]["users"][userId]
 
     val data = user.onceNow().get()
@@ -130,7 +130,7 @@ suspend fun showLeaderboard(
     count: Int,
     top: Boolean
 ): Response {
-    log("showing leaderboard")
+    v("showing leaderboard")
     val secure = getSlackSecureData(teamId)
 
     val requestedCount = if (count <= 0) 10 else if (count >= 25) 25 else count
@@ -174,7 +174,7 @@ suspend fun showScore(
     userId: String,
     isUser: Boolean
 ): Response {
-    log("showing score")
+    v("showing score")
     val secure = getSlackSecureData(teamId)
     val user = getFirebaseDatabase()["crederaPlusPlus"][teamId]["users"][userId]
 
@@ -199,7 +199,7 @@ suspend fun showReasonsWhy(
     isUser: Boolean,
     count: Int?
 ): Response {
-    log("showing reasons why")
+    v("showing reasons why")
     val secure = getSlackSecureData(teamId)
 
     val requestedCount = if (count != null)
@@ -239,7 +239,7 @@ suspend fun showHelp(
     teamId: String,
     channel: String
 ): Response {
-    log("showing help")
+    v("showing help")
     val secure = getSlackSecureData(teamId)
 
     val message = """
