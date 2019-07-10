@@ -24,7 +24,7 @@ fun <T> expectThat(subject: T): AssertionBuilder<T> {
 }
 
 fun <T> AssertionBuilder<T>.isEqualTo(other: Any) = apply {
-    describe("[$subject] is equal to [$other]")
+    describe("expect that actual [$subject] is equal to expected [$other]")
     if (subject == other) {
         pass("subject is equal to other")
     } else {
@@ -50,4 +50,10 @@ fun AssertionBuilder<ChatReply?>.hasReply(message: String) = apply {
     } else {
         fail("No reply was sent")
     }
+}
+
+suspend fun dynamicTest(beforeCallback: (()->Unit)? = null, afterCallback: (()->Unit)? = null, runTest: suspend ()->Unit) {
+    beforeCallback?.invoke()
+    runTest()
+    afterCallback?.invoke()
 }

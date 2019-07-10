@@ -2,7 +2,7 @@ package com.caseyjbrooks.netlify.api.router.chat
 
 class ChatMessageHandler(
     private val messageRegex: Regex,
-    val callback: suspend ChatContext.(MatchResult.Destructured) -> ChatReply
+    val callback: suspend ChatContext.(List<String>) -> ChatReply
 ) : MessageHandler {
 
 
@@ -11,7 +11,12 @@ class ChatMessageHandler(
     }
 
     override suspend fun handle(context: ChatContext): ChatReply? {
-        return context.callback(messageRegex.matchEntire(context.originalMessage)!!.destructured)
+        return context.callback(
+            messageRegex.matchEntire(context.originalMessage)!!
+                .destructured
+                .toList()
+                .map { it.trim() }
+        )
     }
 
     override fun getMessageFormats(): List<String> {
@@ -19,6 +24,6 @@ class ChatMessageHandler(
     }
 }
 
-fun ChatRouter.message(messageRegex: Regex, callback: suspend ChatContext.(MatchResult.Destructured) -> ChatReply) {
+fun ChatRouter.message(messageRegex: Regex, callback: suspend ChatContext.(List<String>) -> ChatReply) {
     handlers.add(ChatMessageHandler(messageRegex, callback))
 }
