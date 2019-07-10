@@ -1,6 +1,6 @@
-package com.caseyjbrooks.netlify.expect
+package com.caseyjbrooks.netlify.api.expect
 
-import com.caseyjbrooks.netlify.EnvVar
+import com.caseyjbrooks.netlify.api.EnvVar
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 

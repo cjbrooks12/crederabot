@@ -1,4 +1,4 @@
-package com.caseyjbrooks.netlify.expect
+package com.caseyjbrooks.netlify.api.expect
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.runBlocking

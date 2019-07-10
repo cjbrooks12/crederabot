@@ -1,6 +1,7 @@
 package com.caseyjbrooks.netlify
 
-import com.caseyjbrooks.netlify.router.chat.ChatReply
+import com.caseyjbrooks.netlify.api.Clog
+import com.caseyjbrooks.netlify.api.router.chat.ChatReply
 import kotlin.test.assertTrue
 
 class AssertionBuilder<T>(val subject: T) {
