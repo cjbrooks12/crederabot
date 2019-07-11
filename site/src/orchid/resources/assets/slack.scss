@@ -1,9 +1,12 @@
+---
+---
+
 .channel-body {
   padding-top: 50px;
   padding-bottom: 150px;
   background: linear-gradient(
-                  rgba(99, 74, 96, 0.9),
-                  rgba(84, 63, 82, 0.9)
+                  lighten({{theme.primaryColor}}, 20%),
+                  lighten({{theme.primaryColor}}, 10%)
   );
 }
 
@@ -22,11 +25,36 @@
   grid-template-rows: 50px 350px 50px;
 
   .sidebar {
-    background: #4D394B;
+    background: {{theme.primaryColor}};
     grid-column-start: 1;
     grid-column-end: 1;
     grid-row-start: 1;
     grid-row-end: 4;
+
+    .channel-list {
+      list-style: none;
+
+      .channel-item {
+        margin: 10px 40px 10px 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        .bullet {
+          width: 12px;
+          height: 12px;
+          border-radius: 12px;
+          background: lighten({{theme.primaryColor}}, 40%);
+        }
+
+        .text {
+          height: 8px;
+          width: 100%;
+          margin-left: 8px;
+          background: lighten({{theme.primaryColor}}, 40%);
+        }
+      }
+    }
   }
 
   .channel-header {
@@ -43,15 +71,17 @@
     grid-column-end: 5;
     grid-row-start: 2;
     grid-row-end: 2;
-    overflow-x: scroll;
-    padding: 0 20px;
+    padding: 10px 20px;
 
     display: flex;
     flex-direction: column-reverse;
 
     .message {
       position: relative;
-      margin-bottom: 10px;
+
+      &:not(:first-child) {
+        margin-bottom: 10px;
+      }
 
       .user-info {
         position: relative;
@@ -60,8 +90,8 @@
         padding-top: 4px;
 
         img {
-          width: 60px;
-          height: 60px;
+          width: 40px;
+          height: 40px;
           border-radius: 5px;
         }
       }
@@ -75,17 +105,21 @@
         width: calc(100% - 100px);
 
         .person-name {
-          font-size: 14px;
-          font-weight: bold;
-
+          .name {
+            font-size: 16px;
+            font-weight: bold;
+            margin-right: 8px;
+          }
           .time {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: lighter;
           }
         }
 
         .person-text {
-
+          p {
+            margin: 0;
+          }
         }
       }
     }
@@ -109,7 +143,8 @@
         width: 40px;
         height: 40px;
         background: white;
-        border: thin solid #ddd;
+        border: none;
+        box-shadow: inset 0 0 0 2px {{theme.primaryColor}};
         display: flex;
         padding: 0;
         align-content: center;
@@ -122,19 +157,20 @@
       }
 
       .input-field {
-        width: calc(100% - 40px);
+        width: calc(100% - 38px);
         border-top-left-radius: 0;
         border-bottom-left-radius: 0;
         border-top-right-radius: 5px;
         border-bottom-right-radius: 5px;
         display: inline-block;
         background: white;
-        border: thin solid #ddd;
-        height: 36px;
+        border: none;
+        box-shadow: inset 0 0 0 2px {{theme.primaryColor}};
+        height: 40px;
         padding-left: 20px;
         padding-right: 20px;
         box-sizing: border-box;
-        margin: 2px 0 2px 0;
+        margin: 0 0 0 -2px;
       }
     }
   }

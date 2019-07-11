@@ -37,6 +37,7 @@ dependencies {
     orchidRuntime("io.github.javaeden.orchid:OrchidSwagger:$orchid_version")
     orchidRuntime("io.github.javaeden.orchid:OrchidPluginDocs:$orchid_version")
     orchidRuntime("io.github.javaeden.orchid:OrchidForms:$orchid_version")
+    orchidRuntime("io.github.javaeden.orchid:OrchidDiagrams:$orchid_version")
 }
 
 project.version = "1"

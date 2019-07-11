@@ -22,11 +22,11 @@ fun main() {
     val app = PlusPlusApp(DebugEnv())
     js("window.plusPlusApp = app")
 
-    val formButton = document.querySelector(".input-wrapper .input-button")!!
-    val formField = document.querySelector(".input-wrapper .input-field")!! as HTMLInputElement
+    val form = document.querySelector("form.input-wrapper")!!
+    val formField = document.querySelector("form.input-wrapper input")!! as HTMLInputElement
 
-    formButton.addEventListener(type = "click", callback = {
-
+    form.addEventListener(type = "submit", callback = { event ->
+        event.preventDefault()
 
         val message = formField.value ?: ""
         ChatUser.Visitor.appendMessage(message)
@@ -36,7 +36,7 @@ fun main() {
             GlobalScope.launch {
                 ChatUser.Geoffrey.appendMessage(app.sendTestMessage(message))
             }
-        }, 1200)
+        }, 750)
     })
 }
 
@@ -47,7 +47,7 @@ fun ChatUser.appendMessage(message: String) {
         }
         div("message-info") {
             div("person-name") {
-                +"$userName "
+                span("name") { +"$userName " }
                 span("time") { +Date().toLocaleTimeString() }
             }
             div("person-text") { p { +message } }
