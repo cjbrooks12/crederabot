@@ -1,22 +1,20 @@
 package com.caseyjbrooks.netlify.impl.environments
 
 import com.caseyjbrooks.netlify.api.router.chat.ChatContext
-import com.caseyjbrooks.netlify.api.router.chat.ChatRootRouter
 import com.caseyjbrooks.netlify.api.router.chat.ChatRouter
 import com.caseyjbrooks.netlify.api.router.http.HttpRouter
+import com.caseyjbrooks.netlify.api.router.http.chatRoute
 import com.caseyjbrooks.netlify.api.router.http.ok
 import com.caseyjbrooks.netlify.api.router.http.post
-import com.caseyjbrooks.netlify.api.router.http.route
 
 object SlackConstants {
+    const val BOT_MENTION = "\\s*?<@(\\w+)>\\s*?"
     const val USERS_MENTION = "\\s*?<@(\\w+)>\\s*?"
     const val THING_MENTION = "\\s*?(.+)\\s*?"
 }
 
 fun HttpRouter.slack(messageRouterInit: ChatRouter.()->Unit) {
-    route("slack") {
-        val chatRouter = ChatRootRouter(messageRouterInit)
-
+    chatRoute("slack", messageRouterInit) { chatRouter ->
         post("message") {
             val body = mapOf<String, String>()
             val context = object : ChatContext {

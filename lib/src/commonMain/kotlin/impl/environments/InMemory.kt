@@ -9,6 +9,7 @@ import com.caseyjbrooks.netlify.api.router.http.post
 import com.caseyjbrooks.netlify.api.router.http.route
 
 object InMemoryConstants {
+    const val BOT_MENTION = "\\s*?@geoffrey\\s*?"
     const val MENTION = "\\s*?@(.+)\\s*?"
 }
 

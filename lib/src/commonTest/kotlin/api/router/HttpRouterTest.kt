@@ -36,6 +36,10 @@ class HttpRouterTest {
             "PUT" to "/users/:id",
             "DELETE" to "/users/:id"
         )
+
+        var visitorCount = 0
+        router.visit { visitorCount++ }
+        expectThat(visitorCount).isEqualTo(7) // root router, its subrouter, and 5 routes
     }
 
     @Test
@@ -58,6 +62,10 @@ class HttpRouterTest {
             "PUT" to "/api/users/:id",
             "DELETE" to "/api/users/:id"
         )
+
+        var visitorCount = 0
+        router.visit { visitorCount++; }
+        expectThat(visitorCount).isEqualTo(8) // root router, its subrouter, which is a subrouter with 5 routes
     }
 
     private fun HttpRouter.usersResource() {

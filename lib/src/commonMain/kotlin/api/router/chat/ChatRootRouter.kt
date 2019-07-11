@@ -18,7 +18,12 @@ class ChatRootRouter(
         return subRouter.handle(context)
     }
 
-    override fun getMessageFormats(): List<String> {
+    override fun getMessageFormats(): List<Pair<String, String>> {
         return subRouter.getMessageFormats()
+    }
+
+    override fun visit(onVisit: (MessageHandler) -> Unit) {
+        onVisit(this)
+        subRouter.visit(onVisit)
     }
 }

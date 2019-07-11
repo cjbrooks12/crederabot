@@ -9,7 +9,10 @@ class SlackbotModule : OrchidModule() {
 
     override fun configure() {
         addToSet<OrchidGenerator, NetlifyFunctionsGenerator>()
-        addToSet<OrchidComponent, SlackConversationComponent>()
+        addToSet<OrchidComponent>(
+            ChatbotConversationComponent::class,
+            ChatbotDocumentationComponent::class
+        )
     }
 
 }

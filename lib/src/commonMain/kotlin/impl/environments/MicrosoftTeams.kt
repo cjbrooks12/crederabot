@@ -9,6 +9,7 @@ import com.caseyjbrooks.netlify.api.router.http.post
 import com.caseyjbrooks.netlify.api.router.http.route
 
 object MicrosoftTeamsConstants {
+    const val BOT_MENTION = "\\s*?<@(\\w+)>\\s*?"
     const val USERS_MENTION = "\\s*?<@(\\w+)>\\s*?"
     const val THING_MENTION = "\\s*?(.+)\\s*?"
 }

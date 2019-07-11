@@ -5,6 +5,8 @@ class ChatMessageHandler(
     val callback: suspend ChatContext.(List<String>) -> ChatReply
 ) : MessageHandler {
 
+    var simpleMessageFormat: String = messageRegex.pattern
+    var simpleMessageDescription: String = ""
 
     override suspend fun matches(from: String, message: String): Boolean {
         return messageRegex.matches(message)
@@ -19,11 +21,15 @@ class ChatMessageHandler(
         )
     }
 
-    override fun getMessageFormats(): List<String> {
-        return listOf(messageRegex.pattern)
+    override fun getMessageFormats(): List<Pair<String, String>> {
+        return listOf(simpleMessageFormat to simpleMessageDescription)
+    }
+
+    override fun visit(onVisit: (MessageHandler) -> Unit) {
+        onVisit(this)
     }
 }
 
-fun ChatRouter.message(messageRegex: Regex, callback: suspend ChatContext.(List<String>) -> ChatReply) {
-    handlers.add(ChatMessageHandler(messageRegex, callback))
+fun ChatRouter.message(messageRegex: Regex, configure: (ChatMessageHandler.()->Unit)? = null, callback: suspend ChatContext.(List<String>) -> ChatReply) {
+    handlers.add(ChatMessageHandler(messageRegex, callback).apply { configure?.invoke(this) })
 }

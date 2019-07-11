@@ -57,4 +57,9 @@ open class HttpRouter : ApiHandler {
 
         return actualResponse!!
     }
+
+    override fun visit(onVisit: (ApiHandler) -> Unit) {
+        onVisit(this)
+        handlers.forEach { it.visit(onVisit) }
+    }
 }

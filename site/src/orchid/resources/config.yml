@@ -8,21 +8,24 @@ theme:
     - type: 'page'
       itemId: 'Home'
       title: 'Crederabot Home'
+    - type: 'page'
+      itemId: 'Privacy Policy'
+    - type: 'page'
+      itemId: 'API Reference'
 
     - type: 'separator'
       title: 'Credera++'
     - type: 'page'
-      itemId: 'Interactive Example'
+      itemId: 'Credera++'
+      title: 'Try A Demo'
+      anchor: 'interactive-example'
+    - type: 'page'
+      itemId: 'Credera++'
+      title: 'Command Reference'
+      anchor: 'command-reference'
     - type: 'link'
       title: 'Add To Slack'
       url: 'https://slack.com/oauth/authorize/?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
-
-    - type: 'separator'
-      title: 'Reference'
-    - type: 'page'
-      itemId: 'API Reference'
-    - type: 'page'
-      itemId: 'Privacy Policy'
 
     - type: 'separator'
       title: 'About Credera'
@@ -33,11 +36,10 @@ theme:
       title: 'Contact Us'
       url: 'https://www.credera.com/contact/'
 
-services:
-  compilers:
-    precompiler:
-      customDelimeters:
-        - regex: '^/\*---(.*)---\*/'
-          group: 1
-          parser: 'yml'
-          fileExtensions: [ 'js', 'css', 'scss' ]
+allPages:
+  components:
+    - type: 'pageContent'
+      order: 10
+    - type: 'template'
+      template: 'page-footer'
+      order: 100

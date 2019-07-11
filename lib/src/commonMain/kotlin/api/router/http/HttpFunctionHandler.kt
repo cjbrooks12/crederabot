@@ -39,6 +39,10 @@ class FunctionHandler(
 
         return true to pathParams
     }
+
+    override fun visit(onVisit: (ApiHandler) -> Unit) {
+        onVisit(this)
+    }
 }
 
 fun HttpRouter.get(path: String, callback: suspend Request.(params: List<String>) -> Response) {

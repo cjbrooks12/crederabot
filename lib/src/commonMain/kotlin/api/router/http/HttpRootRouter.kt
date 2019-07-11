@@ -17,4 +17,9 @@ class HttpRootRouter(
     override fun getPaths(): List<Pair<String, String>> {
         return subRouter.getPaths()
     }
+
+    override fun visit(onVisit: (ApiHandler) -> Unit) {
+        onVisit(this)
+        subRouter.visit(onVisit)
+    }
 }

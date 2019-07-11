@@ -1,0 +1,22 @@
+<h2 class="special" id="command-reference">Command Reference</h2>
+<table>
+  <thead>
+  <tr>
+    <td>Command</td>
+    <td>Description</td>
+  </tr>
+  </thead>
+  <tbody>
+  {% for command in component.messages %}
+      <tr>
+        <td><code>{{ command.first }}</code></td>
+        <td>{{ command.second | compileAs('md')|raw }}</td>
+      </tr>
+  {% endfor %}
+  </tbody>
+</table>
+<ul>
+  <li><code>[...]</code> - placeholder, required</li>
+  <li><code>(...)</code> - placeholder, optional</li>
+  <li><code>@geoffrey</code> - bot mention</li>
+</ul>

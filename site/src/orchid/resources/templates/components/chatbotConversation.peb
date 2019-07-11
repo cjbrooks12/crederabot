@@ -5,6 +5,7 @@
 {% endfor %}
 -->
 
+<h2 class="special" id="interactive-example">Interactive Example</h2>
 <div>
   <div class="channel-body">
     <div class="wrapper" style="display: none">

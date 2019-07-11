@@ -14,8 +14,14 @@ interface MessageHandler {
     suspend fun handle(context: ChatContext) : ChatReply?
 
     /**
-     * List the HTTP paths registered under this handler. Returns pairs of
+     * List the message formats registered under this handler. Returns pairs of a human-readable message format to a
+     * description of what that message format does
      */
-    fun getMessageFormats(): List<String>
+    fun getMessageFormats(): List<Pair<String, String>>
+
+    /**
+     * Implements a Visitor pattern to explore all registered MessageHandlers
+     */
+    fun visit(onVisit: (MessageHandler) -> Unit)
 
 }

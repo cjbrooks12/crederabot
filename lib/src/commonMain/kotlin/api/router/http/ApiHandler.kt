@@ -13,8 +13,13 @@ interface ApiHandler {
     suspend fun call(request: Request): Response?
 
     /**
-     * List the HTTP paths registered under this handler. Returns pairs of
+     * List the HTTP paths registered under this handler. Returns pairs of HTTP method verb to path
      */
     fun getPaths(): List<Pair<String, String>>
+
+    /**
+     * Implements a Visitor pattern to explore all registered ApiHandlers
+     */
+    fun visit(onVisit: (ApiHandler) -> Unit)
 
 }

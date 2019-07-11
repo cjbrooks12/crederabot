@@ -7,11 +7,11 @@ import com.eden.orchid.api.theme.components.OrchidComponent
 import org.apache.commons.io.FilenameUtils
 import javax.inject.Inject
 
-class SlackConversationComponent
+class ChatbotConversationComponent
 @Inject
 constructor(
     context: OrchidContext
-) : OrchidComponent(context, "slackConversation", 100) {
+) : OrchidComponent(context, "chatbotConversation", 100) {
 
     @Option
     lateinit var userIcons: List<String>
@@ -28,7 +28,7 @@ constructor(
             reference.path = "assets/js"
             reference.fileName = FilenameUtils.getBaseName(moduleResourcePath)
             reference.outputExtension = FilenameUtils.getExtension(moduleResourcePath)
-            addJs(JsPage(this@SlackConversationComponent, "component", this, "js", "crederabot-js"))
+            addJs(JsPage(this@ChatbotConversationComponent, "component", this, "js", "crederabot-js"))
         }
     }
 }

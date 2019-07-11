@@ -13,8 +13,13 @@ open class ChatRouter : MessageHandler {
         return apiHandler?.handle(context)
     }
 
-    override fun getMessageFormats(): List<String> {
-        return handlers.flatMap { it.getMessageFormats() }
+    override fun getMessageFormats(): List<Pair<String, String>> {
+        return handlers.flatMap { it.getMessageFormats() }.distinct()
+    }
+
+    override fun visit(onVisit: (MessageHandler) -> Unit) {
+        onVisit(this)
+        handlers.forEach { it.visit(onVisit) }
     }
 
 }
