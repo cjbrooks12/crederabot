@@ -45,24 +45,26 @@ project.version = "1"
 orchid {
     version = "${project.version}"
     theme = "Editorial"
+    environment = "debug"
 
-    if (project.hasProperty("env") && project.property("env") == "prod") {
+    if (project.hasProperty("env") && project.property("env") in listOf("prod", "staging")) {
         environment = "production"
-        val isPullRequest = System.getenv("PULL_REQUEST")
-        if(isPullRequest == "true") {
-            baseUrl = System.getenv("DEPLOY_URL")
+        if (project.property("env") == "prod") {
+            if(System.getenv("CONTEXT") == "branch-deploy") {
+                // branch deploys
+                baseUrl = System.getenv("DEPLOY_PRIME_URL") // Netlify deploy preview URL
+            }
+            else if(System.getenv("PULL_REQUEST")?.toBoolean() == true) {
+                // PR deploy previews
+                baseUrl = System.getenv("DEPLOY_URL") // Netlify deploy preview URL
+            }
+            else if(System.getenv("URL")?.isNotBlank() == true) {
+                // production deploys
+                baseUrl = System.getenv("URL")
+            }
         }
-        else if(System.getenv("URL").isNotBlank()) {
-            baseUrl = System.getenv("URL")
-        }
-        else {
-            baseUrl = "http://localhost:8080"
-        }
-    }
-    else {
-        environment = "debug"
-        baseUrl = "http://localhost:8080"
     }
 }
 
 tasks.getByName("build").dependsOn("orchidBuild")
+tasks.getByName("orchidBuild").dependsOn(":lib:publish")

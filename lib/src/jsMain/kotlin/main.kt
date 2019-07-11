@@ -12,6 +12,7 @@ import kotlinx.html.span
 import kotlinx.html.unsafe
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.get
 import kotlin.browser.document
 import kotlin.browser.window
 import kotlin.js.Date
@@ -74,17 +75,17 @@ enum class ChatUser(
     Geoffrey(
         "Geoffrey",
         "geoffrey",
-        "http://localhost:8080/assets/geoffrey_100x100_tc.jpg"
+        "${window["site"]["baseUrl"]}/assets/geoffrey_100x100_tc.jpg"
     ),
     Sami(
         "Sami",
         "sami",
-        "http://localhost:8080/assets/sami_100x100_tc.jpg"
+        "${window["site"]["baseUrl"]}/assets/sami_100x100_tc.jpg"
     ),
     KyleD(
         "KyleD",
         "kyle",
-        "http://localhost:8080/assets/kyle-d9_100x100_tc.jpg"
+        "${window["site"]["baseUrl"]}/assets/kyle-d9_100x100_tc.jpg"
     ),
     Visitor(
         "You",

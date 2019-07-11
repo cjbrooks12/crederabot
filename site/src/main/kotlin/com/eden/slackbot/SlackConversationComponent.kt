@@ -23,19 +23,12 @@ constructor(
         addCss("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css")
         addCss("https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css")
         addCss("assets/slack.scss")
-        addJs(
-            JsPage(
-                this,
-                "component",
-                context.getLocalResourceEntry(moduleResourcePath).apply {
-                    reference.isUsePrettyUrl = false
-                    reference.path = "assets/js"
-                    reference.fileName = FilenameUtils.getBaseName(moduleResourcePath)
-                    reference.outputExtension = FilenameUtils.getExtension(moduleResourcePath)
-                },
-                "js",
-                "crederabot-js"
-            )
-        )
+        context.getLocalResourceEntry(moduleResourcePath)?.apply {
+            reference.isUsePrettyUrl = false
+            reference.path = "assets/js"
+            reference.fileName = FilenameUtils.getBaseName(moduleResourcePath)
+            reference.outputExtension = FilenameUtils.getExtension(moduleResourcePath)
+            addJs(JsPage(this@SlackConversationComponent, "component", this, "js", "crederabot-js"))
+        }
     }
 }

@@ -7,6 +7,6 @@
 
 [build]
   base    = ""
-  Command = "./gradlew build publish -Penv=prod"
+  Command = "./gradlew clean build -Penv=prod"
   Publish = "site/build/docs/orchid"
 

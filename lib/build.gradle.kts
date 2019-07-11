@@ -106,5 +106,5 @@ publishing {
         maven(url = "${project.buildDir}/.m2/repository")
     }
 }
-project.tasks["build"].dependsOn("jsBrowserWebpack")
+project.tasks["publish"].dependsOn("jsBrowserWebpack")
 //project.tasks["build"].dependsOn("jsNodeBrowserWebpack")

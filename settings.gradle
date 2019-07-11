@@ -9,6 +9,8 @@ pluginManagement {
 }
 enableFeaturePreview("GRADLE_METADATA")
 
+rootProject.name = "crederabot"
+
 include ':site'
 //include ':functions'
 include ':lib'
