@@ -1,20 +1,26 @@
 site:
   about:
-    siteName: 'Credera++'
+    siteName: 'Crederabot'
 
 theme:
   primaryColor: '#a3232a'
   menu:
-    - type: 'link'
-      title: 'Home'
-      url: '/'
+    - type: 'page'
+      itemId: 'Home'
+      title: 'Crederabot Home'
+
+    - type: 'separator'
+      title: 'Credera++'
+    - type: 'page'
+      itemId: 'Interactive Example'
     - type: 'link'
       title: 'Add To Slack'
       url: 'https://slack.com/oauth/authorize/?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
+
+    - type: 'separator'
+      title: 'Reference'
     - type: 'page'
       itemId: 'API Reference'
-    - type: 'page'
-      itemId: 'Contact Us'
     - type: 'page'
       itemId: 'Privacy Policy'
 

@@ -1,7 +1,6 @@
 ---
-title: API Reference
-components:
-  - type: 'pageContent'
+title: Interactive Example
+components: 
   - type: 'slackConversation'
     users: 
       - name: Geoffrey
@@ -30,6 +29,7 @@ components:
         text: Got it! [Slack Chat CSS](#)
       - from: Geoffrey
         time: 9:02 AM
-        text: Sick! I'm so hearting that and posting on Twitter. And Sick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on TwitterSick! I'm so hearting that and posting on Twitter
+        text: Sick! I'm so hearting that and posting on Twitter.
+  - type: 'pageContent'
 ---
 

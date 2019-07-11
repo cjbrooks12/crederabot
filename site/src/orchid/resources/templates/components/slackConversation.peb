@@ -1,7 +1,8 @@
-<div data-shadowed="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css;https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css;{{ 'assets/slack.scss'|asset }}">
+{#<div data-shadowed="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css;https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css;{{ 'assets/slack.scss'|asset }}">#}
+<div>
   <div class="channel-body">
     <div class="wrapper" style="display: none">
-      <div class="animated slideInLeft main-container">
+      <div class="main-container">
         <div class="sidebar"></div>
         <div class="channel-header"></div>
         <div class="channel-messages">
@@ -19,7 +20,9 @@
 
 {% macro slackFooter() %}
 <div class="input-wrapper">
-  <input class="input-button" type="submit" value="+">
+  <button class="input-button" type="submit">
+    <i class="fa fa-plus" aria-hidden="true"></i>
+  </button>
   <input class="input-field" placeholder="Message #crederabot" type="text">
 </div>
 {% endmacro %}

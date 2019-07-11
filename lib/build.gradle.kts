@@ -7,6 +7,7 @@ plugins {
 repositories {
     jcenter()
     maven(url = "https://kotlin.bintray.com/kotlinx")
+    maven(url = "https://dl.bintray.com/kotlin/kotlinx.html")
 }
 
 group = "com.crederabot"
@@ -15,11 +16,11 @@ version = "1.0.0"
 
 kotlin {
     jvm()
-    js {
-        nodejs()
-        browser()
-
+    js() {
         browser {
+            webpackTask {
+                sourceMaps = false
+            }
             testTask {
                 useKarma {
                     useNodeJs()
@@ -64,6 +65,7 @@ kotlin {
                 implementation(kotlin("stdlib-js"))
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.1.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.0")
+                implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.6.12")
             }
         }
 
@@ -73,6 +75,25 @@ kotlin {
                 implementation(kotlin("test-js"))
             }
         }
+
+//        println("getNames=${this.getNames()}")
+//
+//        val jsBrowserMain by creating {
+//            dependsOn(getByName("commonMain"))
+//            dependsOn(jsMain)
+//        }
+//
+//        val jsBrowserTest by getting {
+//            dependsOn(jsBrowserMain)
+//        }
+//
+//        val jsNodeMain by getting {
+//            dependsOn(jsMain)
+//        }
+//
+//        val jsNodeTest by getting {
+//            dependsOn(jsNodeMain)
+//        }
     }
 }
 
@@ -84,3 +105,5 @@ publishing {
         maven(url = "${project.buildDir}/.m2/repository")
     }
 }
+project.tasks["build"].dependsOn("jsBrowserWebpack")
+//project.tasks["build"].dependsOn("jsNodeBrowserWebpack")
