@@ -16,7 +16,7 @@ version = "1.0.0"
 
 kotlin {
     jvm()
-    js() {
+    js {
         browser {
             webpackTask {
                 sourceMaps = false
@@ -66,6 +66,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core-js:1.1.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:0.11.0")
                 implementation("org.jetbrains.kotlinx:kotlinx-html-js:0.6.12")
+                implementation(npm("markdown-it"))
             }
         }
 

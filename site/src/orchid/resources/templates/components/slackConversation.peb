@@ -1,4 +1,10 @@
-{#<div data-shadowed="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css;https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css;{{ 'assets/slack.scss'|asset }}">#}
+<!--
+{% for userIcon in component.userIcons %}
+{{ userIcon|asset }}
+{{ userIcon|asset|resize(100, 100, "tc") }}
+{% endfor %}
+-->
+
 <div>
   <div class="channel-body">
     <div class="wrapper" style="display: none">
@@ -14,11 +20,8 @@
           {{ slackChannel() }}
           </ul>
         </div>
-        <div class="channel-header"></div>
         <div class="channel-messages">
-        {% for message in component.messages|reverse %}
-          {{ slackMessage(message.user, message) }}
-        {% endfor %}
+
         </div>
         <div class="channel-footer">
         {{ slackFooter() }}
@@ -44,21 +47,7 @@
 </form>
 {% endmacro %}
 
-{% macro slackMessage(user, message) %}
-<div class="message">
-  <div class="user-info">
-  {% if user.iconIsExternal() %}
-    <img class="person-img-one" src="{{ user.icon }}" alt="{{ user.name }}">
-  {% else %}
-    <img class="person-img-one" src="{{ user.icon|asset|resize(100, 100, "tc") }}" alt="{{ user.name }}">
-  {% endif %}
-  </div>
-  <div class="message-info">
-    <div class="person-name">
-      <span class="name">{{ user.name }}</span>
-      <span class="time">{{ message.time }}</span>
-    </div>
-    <div class="person-text">{{ message.text|compileAs('md')|raw }}</div>
-  </div>
-</div>
-{% endmacro %}
+{#
+Yesterday: DE6201, DE6211
+Today: DE6206, DE6210
+#}

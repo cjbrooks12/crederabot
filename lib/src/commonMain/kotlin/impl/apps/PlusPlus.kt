@@ -73,12 +73,12 @@ class PlusPlusApp(
             message("^top (\\d+)$".toRegex()) { (count) ->
                 val topUsers = db.getTopUsers(count.toInt())
 
-                reply("Printing top $count:${topUsers.asSeparatedList("\n> • ") { "${it.first} - ${it.second}" }}")
+                reply("Printing top $count:${topUsers.asSeparatedList("\n>\n> • ") { "${it.first} - ${it.second}" }}")
             }
             message("^bottom (\\d+)$".toRegex()) { (count) ->
                 val bottomUsers = db.getBottomUsers(count.toInt())
 
-                reply("Printing bottom $count:${bottomUsers.asSeparatedList("\n> • ") { "${it.first} - ${it.second}" }}")
+                reply("Printing bottom $count:${bottomUsers.asSeparatedList("\n>\n> • ") { "${it.first} - ${it.second}" }}")
             }
 
             message("^score of$mentioned".toRegex()) { (user) ->
@@ -88,7 +88,7 @@ class PlusPlusApp(
             }
             message("^(\\d*)\\s?reasons why$mentioned$".toRegex()) { (count, user) ->
                 db.getUserReasons(user, count.toInt())
-                    ?.let { reasons -> reply("Printing $count reasons why for $user:${reasons.asSeparatedList("\n> • ") { "${it.first} ${it.second}" }}") }
+                    ?.let { reasons -> reply("Printing $count reasons why for $user:${reasons.asSeparatedList("\n>\n> • ") { "${it.first} ${it.second}" }}") }
                     ?: reply("I don't know who $user is...")
             }
         }

@@ -105,11 +105,11 @@ class PlusPlusAppTest {
             "@four += 4" to "four gained 4 points and is now at 4",
             "@five += 5" to "five gained 5 points and is now at 5",
 
-            "bottom 1" to "Printing bottom 1:\n> • one - 1",
-            "bottom 3" to "Printing bottom 3:\n> • one - 1\n> • two - 2\n> • three - 3",
+            "bottom 1" to "Printing bottom 1:\n>\n> • one - 1",
+            "bottom 3" to "Printing bottom 3:\n>\n> • one - 1\n>\n> • two - 2\n>\n> • three - 3",
 
-            "top 1" to "Printing top 1:\n> • five - 5",
-            "top 3" to "Printing top 3:\n> • five - 5\n> • four - 4\n> • three - 3"
+            "top 1" to "Printing top 1:\n>\n> • five - 5",
+            "top 3" to "Printing top 3:\n>\n> • five - 5\n>\n> • four - 4\n>\n> • three - 3"
         )
     }
 
@@ -132,13 +132,13 @@ class PlusPlusAppTest {
             "@kris++" to "kris gained a point and is now at 1",
             "score of @kris" to "kris has 1 points",
 
-            "1 reasons why @casey" to "Printing 1 reasons why for casey:\n> • 1 for four",
-            "3 reasons why @casey" to "Printing 3 reasons why for casey:\n> • 1 for four\n> • 1 for two\n> • 1 for one",
-            "4 reasons why @casey" to "Printing 4 reasons why for casey:\n> • 1 for four\n> • 1 for two\n> • 1 for one",
+            "1 reasons why @casey" to "Printing 1 reasons why for casey:\n>\n> • 1 for four",
+            "3 reasons why @casey" to "Printing 3 reasons why for casey:\n>\n> • 1 for four\n>\n> • 1 for two\n>\n> • 1 for one",
+            "4 reasons why @casey" to "Printing 4 reasons why for casey:\n>\n> • 1 for four\n>\n> • 1 for two\n>\n> • 1 for one",
 
             "1 reasons why @noel" to "I don't know who noel is...",
             "@noel += 10 for being awesome" to "noel gained 10 points for being awesome and is now at 10",
-            "1 reasons why @noel" to "Printing 1 reasons why for noel:\n> • 10 for being awesome"
+            "1 reasons why @noel" to "Printing 1 reasons why for noel:\n>\n> • 10 for being awesome"
         )
     }
 
