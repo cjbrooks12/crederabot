@@ -32,7 +32,7 @@ dependencies {
     orchidRuntime(project)
     orchidRuntime("io.github.javaeden.orchid:OrchidCore:$orchid_version")
     orchidRuntime("io.github.javaeden.orchid:OrchidPages:$orchid_version")
-    orchidRuntime("io.github.javaeden.orchid:OrchidEditorial:$orchid_version")
+    orchidRuntime("io.github.javaeden.orchid:OrchidCopper:$orchid_version")
     orchidRuntime("io.github.javaeden.orchid:OrchidSearch:$orchid_version")
     orchidRuntime("io.github.javaeden.orchid:OrchidSwagger:$orchid_version")
     orchidRuntime("io.github.javaeden.orchid:OrchidPluginDocs:$orchid_version")
@@ -44,7 +44,7 @@ project.version = "1"
 
 orchid {
     version = "${project.version}"
-    theme = "Editorial"
+    theme = "Copper"
     environment = "debug"
 
     if (project.hasProperty("env") && project.property("env") in listOf("prod", "staging")) {

@@ -1,5 +1,5 @@
-<h2 class="special" id="command-reference">Command Reference</h2>
-<table>
+<h2 class="is-size-2" id="command-reference">Command Reference</h2>
+<table class="table">
   <thead>
   <tr>
     <td>Command</td>

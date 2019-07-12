@@ -1,13 +1,9 @@
-<div class="row">
-  <div class="8u -2u 12u(small)" style="text-align: center" >
-  {{ pageFooter() }}
-  </div>
+<div style="text-align: center" >
+{{ pageFooter() }}
 </div>
 
 {% macro pageFooter() %}
 {% filter compileAs('md') %}
-
----
 
 ## Credera is a full-service management and IT consulting firm with offices in Dallas, Houston, and Denver.
 

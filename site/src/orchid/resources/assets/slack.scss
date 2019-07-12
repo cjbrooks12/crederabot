@@ -1,12 +1,14 @@
 ---
 ---
 
+$red:          {{ theme.colors.red }};
+
 .channel-body {
   padding-top: 50px;
   padding-bottom: 150px;
   background: linear-gradient(
-                  lighten({{theme.primaryColor}}, 20%),
-                  lighten({{theme.primaryColor}}, 10%)
+                  lighten({{theme.palette.primary}}, 20%),
+                  lighten({{theme.palette.primary}}, 10%)
   );
 }
 
@@ -25,7 +27,7 @@
   grid-template-rows: 50px 350px 50px;
 
   .sidebar {
-    background: {{theme.primaryColor}};
+    background: {{theme.palette.primary}};
     grid-column-start: 1;
     grid-column-end: 1;
     grid-row-start: 1;
@@ -48,14 +50,14 @@
           width: 12px;
           height: 12px;
           border-radius: 12px;
-          background: lighten({{theme.primaryColor}}, 40%);
+          background: lighten({{theme.palette.primary}}, 40%);
         }
 
         .text {
           height: 8px;
           width: 100%;
           margin-left: 12px;
-          background: lighten({{theme.primaryColor}}, 40%);
+          background: lighten({{theme.palette.primary}}, 40%);
         }
       }
     }
@@ -141,7 +143,7 @@
         height: 40px;
         background: white;
         border: none;
-        box-shadow: inset 0 0 0 2px {{theme.primaryColor}};
+        box-shadow: inset 0 0 0 2px {{theme.palette.primary}};
         display: flex;
         padding: 0;
         align-content: center;
@@ -162,7 +164,7 @@
         display: inline-block;
         background: white;
         border: none;
-        box-shadow: inset 0 0 0 2px {{theme.primaryColor}};
+        box-shadow: inset 0 0 0 2px {{theme.palette.primary}};
         height: 40px;
         padding-left: 20px;
         padding-right: 20px;

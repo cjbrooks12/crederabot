@@ -3,7 +3,27 @@ site:
     siteName: 'Crederabot'
 
 theme:
-  primaryColor: '#a3232a'
+  social:
+    other:
+      - link: 'https://multiplatform--crederabot.netlify.com'
+        label: 'Home'
+        icon: 'fas fa-home'
+      - link: 'https://github.com/cjbrooks12/OrchidNetlifySlackbot'
+        label: 'Github'
+        icon: 'fab fa-github'
+      - link: 'https://twitter.com/OrchidSSG'
+        label: 'Twitter'
+        icon: 'fab fa-twitter'
+  sidebarBackground: 'primary'
+  sidebarBackgroundType: 'GRADIENT'
+  colors:
+    red: '#a3232a'
+  palette:
+    primary: 'RED'
+    link: 'RED'
+
+allPages:
+  layout: 'index_menu'
   menu:
     - type: 'page'
       itemId: 'Home'
@@ -13,33 +33,32 @@ theme:
     - type: 'page'
       itemId: 'API Reference'
 
-    - type: 'separator'
+    - type: 'page'
+      itemId: 'Credera++'
+    - type: 'submenu'
       title: 'Credera++'
-    - type: 'page'
-      itemId: 'Credera++'
-      title: 'Try A Demo'
-      anchor: 'interactive-example'
-    - type: 'page'
-      itemId: 'Credera++'
-      title: 'Command Reference'
-      anchor: 'command-reference'
-    - type: 'link'
-      title: 'Add To Slack'
-      url: 'https://slack.com/oauth/authorize/?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
+      menu:
+        - type: 'page'
+          itemId: 'Credera++'
+          title: 'Try A Demo'
+          anchor: 'interactive-example'
+        - type: 'page'
+          itemId: 'Credera++'
+          title: 'Command Reference'
+          anchor: 'command-reference'
+        - type: 'link'
+          title: 'Add To Slack'
+          url: 'https://slack.com/oauth/authorize/?client_id=402674575044.402789997363&scope=channels:history,chat:write:bot,bot'
 
-    - type: 'separator'
+    - type: 'link'
       title: 'About Credera'
-    - type: 'link'
-      title: 'Learn More'
       url: 'https://www.credera.com/'
-    - type: 'link'
-      title: 'Contact Us'
-      url: 'https://www.credera.com/contact/'
-
-allPages:
-  components:
-    - type: 'pageContent'
-      order: 10
-    - type: 'template'
-      template: 'page-footer'
-      order: 100
+    - type: 'submenu'
+      title: 'About Credera'
+      menu:
+        - type: 'link'
+          title: 'Learn More'
+          url: 'https://www.credera.com/'
+        - type: 'link'
+          title: 'Contact Us'
+          url: 'https://www.credera.com/contact/'

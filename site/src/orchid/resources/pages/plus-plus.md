@@ -1,18 +1,17 @@
 ---
 title: 'Credera++'
 components: 
+  - type: 'pageContent'
   - type: 'chatbotConversation'
-    order: 20 
     moduleResourcePath: '../../../../lib/build/libs/crederabot-lib.js'
     userIcons:
       - 'assets/geoffrey.jpg'
       - 'assets/kyle-d9.jpg' # Photo by Ramy Kabalan on Unsplash
       - 'assets/sami.jpg' # Photo by Prince Akachi on Unsplash
   - type: 'chatbotDocumentation'
-    order: 30
 ---
 
-# About and Usage
+### About and Usage
 
 Credera++ is a simple slackbot to rate your friends! Simply `++` or `--` them in Slack and let Credd be the Judge. 
 Credera++ also keeps track of the reasons why someone was given points or had them taken away, for you to forever 
