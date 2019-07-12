@@ -8,7 +8,7 @@ theme:
       - link: 'https://multiplatform--crederabot.netlify.com'
         label: 'Home'
         icon: 'fas fa-home'
-      - link: 'https://github.com/cjbrooks12/OrchidNetlifySlackbot'
+      - link: 'https://github.com/cjbrooks12/crederabot'
         label: 'Github'
         icon: 'fab fa-github'
       - link: 'https://twitter.com/OrchidSSG'
